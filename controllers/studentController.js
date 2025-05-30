@@ -139,7 +139,7 @@ exports.verifyOtp = async (req, res) => {
 
     // ✅ Generate JWT Token
     const token = jwt.sign(
-      { id: user._id, role: 'student' }, // payload
+      { id: student._id, role: 'student' }, // payload
       JWT_SECRET,
       { expiresIn: '7d' }
     );
