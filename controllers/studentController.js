@@ -86,8 +86,8 @@ exports.registerStudent = async (req, res) => {
   }
 };
 
-// Login with phone number and dummy OTP // Dummy OTP sending (for development)
 
+// Login with phone number and dummy OTP // Dummy OTP sending (for development)
 exports.sendOtp = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
@@ -99,12 +99,25 @@ exports.sendOtp = async (req, res) => {
       });
     }
 
-    // Save or cache OTP here in future with expiry (e.g. Redis, DB)
+    // ✅ Check if phone number exists
+    const existingUser = await Student.findOne({ phoneNumber });
+
+    if (!existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Phone number not found. Try with another Phone Number',
+      });
+    }
+
+    // 🔐 OTP logic — can be saved to DB or Redis
+    const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+
+    // You can save the OTP in DB with expiry or send via SMS API here
 
     return res.status(200).json({
       success: true,
       message: 'OTP sent successfully',
-      //   otp: '123456' // show only in dev
+      // otp, // 🔓 Show only in development/testing
     });
   } catch (err) {
     return res.status(500).json({
