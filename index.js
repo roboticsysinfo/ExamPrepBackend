@@ -4,14 +4,14 @@ const connectDB = require('./config/db');
 require('dotenv').config();
 const path = require('path');
 
-
 const studentRoutes = require("./routes/studentRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
 const topicRoutes = require("./routes/topicRoutes");
 const examRoutes = require("./routes/examRoutes");
 const testRoutes = require("./routes/testRoutes");
-const questionRoutes = require("./routes/questionRoutes")
-const userRoutes = require("./routes/userRoutes")
+const questionRoutes = require("./routes/questionRoutes");
+const userRoutes = require("./routes/userRoutes");
+const examCategoryRoutes = require("./routes/examCategoryRoutes");
 
 const app = express();
 
@@ -43,6 +43,8 @@ app.use("/api", examRoutes)
 app.use("/api", testRoutes)
 
 app.use("/api", questionRoutes)
+
+app.use("/api", examCategoryRoutes)
 
 // ========= Routes end=============
 

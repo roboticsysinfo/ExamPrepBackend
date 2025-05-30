@@ -4,16 +4,31 @@ const Exam = require('../models/Exam');
 // ✅ Create Exam
 exports.createExam = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, examCategory } = req.body;
 
-    const examImage = req.file ? req.file.filename : null;
+    if (!name || !examCategory) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name and exam category are required',
+        data: null
+      });
+    }
 
-    const exam = await Exam.create({ name, description, examImage });
+    const examImage = req.file ? req.file.filename : undefined;
+
+    const exam = await Exam.create({
+      name,
+      description,
+      examCategory,
+      examImage
+    });
+
+    const populatedExam = await exam.populate('examCategory');
 
     res.status(201).json({
       success: true,
       message: 'Exam created successfully',
-      data: exam
+      data: populatedExam
     });
   } catch (error) {
     console.error(error);
@@ -30,13 +45,18 @@ exports.createExam = async (req, res) => {
 exports.updateExam = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, examCategory } = req.body;
     const examImage = req.file ? req.file.filename : undefined;
 
-    const updateData = { name, description };
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (description) updateData.description = description;
+    if (examCategory) updateData.examCategory = examCategory;
     if (examImage) updateData.examImage = examImage;
 
-    const exam = await Exam.findByIdAndUpdate(id, updateData, { new: true });
+    const exam = await Exam.findByIdAndUpdate(id, updateData, {
+      new: true
+    }).populate('examCategory');
 
     if (!exam) {
       return res.status(404).json({
@@ -61,8 +81,6 @@ exports.updateExam = async (req, res) => {
   }
 };
 
-
-
 // ✅ Delete Exam
 exports.deleteExam = async (req, res) => {
   try {
@@ -83,6 +101,7 @@ exports.deleteExam = async (req, res) => {
       data: exam
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to delete exam',
@@ -91,12 +110,11 @@ exports.deleteExam = async (req, res) => {
   }
 };
 
-
 // ✅ Get Single Exam
 exports.getExamById = async (req, res) => {
   try {
     const { id } = req.params;
-    const exam = await Exam.findById(id);
+    const exam = await Exam.findById(id).populate('examCategory');
 
     if (!exam) {
       return res.status(404).json({
@@ -112,6 +130,7 @@ exports.getExamById = async (req, res) => {
       data: exam
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch exam',
@@ -120,11 +139,12 @@ exports.getExamById = async (req, res) => {
   }
 };
 
-
 // ✅ Get All Exams
 exports.getAllExams = async (req, res) => {
   try {
-    const exams = await Exam.find().sort({ createdAt: -1 });
+    const exams = await Exam.find()
+      .sort({ createdAt: -1 })
+      .populate('examCategory');
 
     res.json({
       success: true,
@@ -132,6 +152,7 @@ exports.getAllExams = async (req, res) => {
       data: exams
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch exams',
