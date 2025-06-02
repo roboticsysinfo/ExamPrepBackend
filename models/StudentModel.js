@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const studentSchema = new mongoose.Schema({
   registrationNumber: {
     type: String,
@@ -17,7 +16,7 @@ const studentSchema = new mongoose.Schema({
   city: { type: String, required: true },
   gender: { type: String, required: true },
   dob: { type: String, required: true },
-  village: { type: String, },
+  village: { type: String },
   profileImage: {
     type: String,
     default: 'https://dummyimage.com/150x150/cccccc/000000&text=Profile'
@@ -26,7 +25,21 @@ const studentSchema = new mongoose.Schema({
     type: String,
     default: 'student'
   },
-}, { timestamps: true });
 
+  // ✅ New Score Fields
+  mockTestScore: {
+    type: Number,
+    default: 0
+  },
+  practiceTestScore: {
+    type: Number,
+    default: 0
+  },
+  overallScore: {
+    type: Number,
+    default: 0
+  }
+
+}, { timestamps: true });
 
 module.exports = mongoose.model('Student', studentSchema);

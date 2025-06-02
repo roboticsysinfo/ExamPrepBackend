@@ -35,6 +35,7 @@ exports.registerStudent = async (req, res) => {
       gender
     } = req.body;
 
+
     // Check if student already exists
     const existing = await Student.findOne({ phoneNumber });
     if (existing) {
@@ -51,7 +52,6 @@ exports.registerStudent = async (req, res) => {
     }
 
     // genereate student unique registration number
-
     const registrationNumber = await generateRegNumber();
 
     // Create student

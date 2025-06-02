@@ -23,7 +23,6 @@ router.put('/update/student/:id', upload.single('profileImage'), authenticateUse
 // delete student 
 router.delete('/delete/student/:id', authenticateUser, authorizeRoles('super-admin', 'admin'), studentController.deleteStudent);
 
-
 router.get('/students', studentController.getAllStudents);
 
 // get single student info

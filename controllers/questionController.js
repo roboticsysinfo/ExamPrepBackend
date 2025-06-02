@@ -4,14 +4,25 @@ const Question = require('../models/Question');
 // 🔹 Create Question
 exports.createQuestion = async (req, res) => {
   try {
-    
-    const { questionText, options, correctAnswerIndex, explanation, exam, subject, topic } = req.body;
+    const {
+      questionText,
+      options,
+      correctAnswerIndex,
+      explanation,
+      marks,
+      difficulty,
+      exam,
+      subject,
+      topic
+    } = req.body;
 
     const question = await Question.create({
       questionText,
       options,
       correctAnswerIndex,
       explanation,
+      marks,
+      difficulty,
       exam,
       subject,
       topic
@@ -23,22 +34,21 @@ exports.createQuestion = async (req, res) => {
       data: question,
     });
   } catch (error) {
-    console.error('Create Question Error:', error);  // Log full error on server
+    console.error('Create Question Error:', error);
 
     res.status(500).json({
       success: false,
       message: 'Failed to create question',
-      error: error.message || error.toString(),  // Send actual error message in response
+      error: error.message || error.toString(),
       data: null,
     });
   }
 };
 
-
 // 🔹 Create Multiple Questions at Once
 exports.bulkCreateQuestions = async (req, res) => {
   try {
-    const questionsArray = req.body.questions;  // Array of question objects
+    const questionsArray = req.body.questions;
 
     if (!Array.isArray(questionsArray) || questionsArray.length === 0) {
       return res.status(400).json({
@@ -48,8 +58,13 @@ exports.bulkCreateQuestions = async (req, res) => {
       });
     }
 
-    // Insert all questions at once
-    const createdQuestions = await Question.insertMany(questionsArray);
+    const sanitizedQuestions = questionsArray.map(q => ({
+      ...q,
+      difficulty: q.difficulty || 'easy',
+      marks: q.marks || 1
+    }));
+
+    const createdQuestions = await Question.insertMany(sanitizedQuestions);
 
     res.status(201).json({
       success: true,
@@ -67,18 +82,35 @@ exports.bulkCreateQuestions = async (req, res) => {
   }
 };
 
-
 // 🔹 Update Question
-
 exports.updateQuestion = async (req, res) => {
-
   try {
     const { id } = req.params;
-    const { questionText, options, correctAnswerIndex, explanation, exam, subject, topic } = req.body;
+    const {
+      questionText,
+      options,
+      correctAnswerIndex,
+      explanation,
+      marks,
+      difficulty,
+      exam,
+      subject,
+      topic
+    } = req.body;
 
     const question = await Question.findByIdAndUpdate(
       id,
-      { questionText, options, correctAnswerIndex, explanation, exam, subject, topic },
+      {
+        questionText,
+        options,
+        correctAnswerIndex,
+        explanation,
+        marks,
+        difficulty,
+        exam,
+        subject,
+        topic
+      },
       { new: true }
     );
 
@@ -187,17 +219,17 @@ exports.getAllQuestions = async (req, res) => {
   }
 };
 
-
-// GET /api/questions/filter?exam=examId&subject=subjectId&topic=topicId
-
+// 🔹 Get Questions by Filter
+// GET /api/questions/filter?exam=examId&subject=subjectId&topic=topicId&difficulty=easy
 exports.getQuestionsByFilter = async (req, res) => {
   try {
-    const { exam, subject, topic } = req.query;
+    const { exam, subject, topic, difficulty } = req.query;
 
     const filter = {};
     if (exam) filter.exam = exam;
     if (subject) filter.subject = subject;
     if (topic) filter.topic = topic;
+    if (difficulty) filter.difficulty = difficulty;
 
     const questions = await Question.find(filter)
       .populate('exam')
