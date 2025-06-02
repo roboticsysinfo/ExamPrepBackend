@@ -25,7 +25,7 @@ const admissionQuerySchema = new mongoose.Schema({
         match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     },
     phoneNumber: {
-        type: Number,
+        type: String,
         required: true,
         match: /^[6-9]\d{9}$/
     },
