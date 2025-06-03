@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
+  instituteId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Institute'
+  },
 
   questionText: { type: String, required: true },
 

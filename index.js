@@ -9,23 +9,22 @@ const studentRoutes = require("./routes/studentRoutes");
 const subjectRoutes = require("./routes/subjectRoutes");
 const topicRoutes = require("./routes/topicRoutes");
 const examRoutes = require("./routes/examRoutes");
-const testRoutes = require("./routes/testRoutes");
+const mockTestRoutes = require("./routes/mockTestRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const userRoutes = require("./routes/userRoutes");
 const examCategoryRoutes = require("./routes/examCategoryRoutes");
 const admissionQueryRoutes = require("./routes/admissionQueryRoutes");
 const instituteRoutes = require("./routes/instituteRoutes")
-
+const previousQuestionPaperRoutes = require("./routes/previousQuestionPaperRoutes");
+const practiceTestRoutes = require("./routes/practiceTestRoutes")
 
 const app = express();
-
 
 const corsOptions = {
   origin: "*", // Allow all origins
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
   credentials: true, // Allow credentials (cookies, auth headers)
 };
-
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -48,7 +47,7 @@ app.use("/api", topicRoutes);
 
 app.use("/api", examRoutes);
 
-app.use("/api", testRoutes);
+app.use("/api", mockTestRoutes);
 
 app.use("/api", questionRoutes);
 
@@ -57,6 +56,10 @@ app.use("/api", examCategoryRoutes);
 app.use("/api", admissionQueryRoutes);
 
 app.use("/api", instituteRoutes)
+
+app.use("/api", previousQuestionPaperRoutes)
+
+app.use("/api", practiceTestRoutes)
 
 // ========= Routes end=============
 

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/jwt');
 
+
 // Create new user
 exports.createUser = async (req, res) => {
     try {
@@ -113,6 +114,7 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+
 // Get single user
 exports.getUserById = async (req, res) => {
     try {
@@ -123,6 +125,7 @@ exports.getUserById = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 // Update user
 exports.updateUser = async (req, res) => {
@@ -139,6 +142,7 @@ exports.updateUser = async (req, res) => {
     }
 };
 
+
 // Delete user
 exports.deleteUser = async (req, res) => {
     try {
@@ -148,6 +152,8 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+
 
 // Assign Role
 exports.assignRole = async (req, res) => {

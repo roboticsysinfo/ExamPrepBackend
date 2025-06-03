@@ -8,6 +8,7 @@ const {
   getAllQuestions,
   bulkCreateQuestions,
   getQuestionsByFilter,
+  getQuestionsByInstituteId,
 } = require('../controllers/questionController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -28,5 +29,7 @@ router.get('/all/questions', getAllQuestions);         // Get all questions
 
 router.get('/questions/filter', getQuestionsByFilter);
 
+// question by institute id
+router.get('/questions/institute/:instituteId', getQuestionsByInstituteId);
 
 module.exports = router;

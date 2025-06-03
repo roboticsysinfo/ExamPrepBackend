@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const examSchema = new mongoose.Schema({
-
+  instituteId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Institute'
+  },
   name: { type: String, required: true },
   examCategory: {
     type: mongoose.Schema.Types.ObjectId,

@@ -17,16 +17,23 @@ router.post('/student/login/send-otp', studentController.sendOtp);
 // verify otp for student login app
 router.post('/student/verify-otp', studentController.verifyOtp);
 
+
 // update student info
 router.put('/update/student/:id', upload.single('profileImage'), authenticateUser, authorizeRoles('super-admin', 'admin', "teacher"), studentController.updateStudent);
+
 
 // delete student 
 router.delete('/delete/student/:id', authenticateUser, authorizeRoles('super-admin', 'admin'), studentController.deleteStudent);
 
-router.get('/students', studentController.getAllStudents);
+
+router.get('/students', authenticateUser, authorizeRoles('super-admin'), studentController.getAllStudents);
+
 
 // get single student info
-router.get('/getstudentbyid/:id', studentController.getStudentById);
+router.get('/getstudentbyid/:id', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), studentController.getStudentById);
+
+
+router.get('/get-students-by-institute/:instituteId',authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher') , studentController.getStudentsByInstituteId);
 
 
 module.exports = router;

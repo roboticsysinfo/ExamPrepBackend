@@ -2,7 +2,6 @@ const Student = require('../models/StudentModel');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'mock_secret';
 
-
 // Generate unique 10 digit number
 const generateRegNumber = async () => {
   let regNumber;
@@ -17,11 +16,11 @@ const generateRegNumber = async () => {
   return regNumber;
 };
 
-
-// Register student
+// =================== REGISTER STUDENT ===================
 exports.registerStudent = async (req, res) => {
   try {
     const {
+      instituteId,
       name,
       phoneNumber,
       email,
@@ -35,6 +34,12 @@ exports.registerStudent = async (req, res) => {
       gender
     } = req.body;
 
+    if (!instituteId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Institute ID is required',
+      });
+    }
 
     // Check if student already exists
     const existing = await Student.findOne({ phoneNumber });
@@ -48,14 +53,13 @@ exports.registerStudent = async (req, res) => {
     // If image is uploaded
     let profileImage = 'https://dummyimage.com/150x150/cccccc/000000&text=Profile';
     if (req.file) {
-      profileImage = req.file.path; // If stored locally
+      profileImage = req.file.path;
     }
 
-    // genereate student unique registration number
     const registrationNumber = await generateRegNumber();
 
-    // Create student
     const student = await Student.create({
+      instituteId,
       registrationNumber,
       name,
       phoneNumber,
@@ -86,8 +90,7 @@ exports.registerStudent = async (req, res) => {
   }
 };
 
-
-// Login with phone number and dummy OTP // Dummy OTP sending (for development)
+// =================== SEND OTP (Dummy) ===================
 exports.sendOtp = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
@@ -99,7 +102,6 @@ exports.sendOtp = async (req, res) => {
       });
     }
 
-    // ✅ Check if phone number exists
     const existingUser = await Student.findOne({ phoneNumber });
 
     if (!existingUser) {
@@ -109,15 +111,12 @@ exports.sendOtp = async (req, res) => {
       });
     }
 
-    // 🔐 OTP logic — can be saved to DB or Redis
     const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
-
-    // You can save the OTP in DB with expiry or send via SMS API here
 
     return res.status(200).json({
       success: true,
       message: 'OTP sent successfully',
-      // otp, // 🔓 Show only in development/testing
+      // otp,
     });
   } catch (err) {
     return res.status(500).json({
@@ -128,8 +127,7 @@ exports.sendOtp = async (req, res) => {
   }
 };
 
-
-// OTP verify
+// =================== VERIFY OTP (Dummy 123456) ===================
 exports.verifyOtp = async (req, res) => {
   try {
     const { phoneNumber, otp } = req.body;
@@ -150,9 +148,8 @@ exports.verifyOtp = async (req, res) => {
       });
     }
 
-    // ✅ Generate JWT Token
     const token = jwt.sign(
-      { id: student._id, role: 'student' }, // payload
+      { id: student._id, role: 'student' },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -172,14 +169,13 @@ exports.verifyOtp = async (req, res) => {
   }
 };
 
-// Update student by ID (with optional image upload)
+// =================== UPDATE STUDENT ===================
 exports.updateStudent = async (req, res) => {
   try {
     const updateData = { ...req.body };
 
-    // If image is uploaded
     if (req.file) {
-      updateData.profileImage = req.file.path; // local image path
+      updateData.profileImage = req.file.path;
     }
 
     const student = await Student.findByIdAndUpdate(req.params.id, updateData, {
@@ -207,9 +203,7 @@ exports.updateStudent = async (req, res) => {
   }
 };
 
-
-
-// Get student by ID
+// =================== GET STUDENT BY ID ===================
 exports.getStudentById = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
@@ -235,8 +229,7 @@ exports.getStudentById = async (req, res) => {
   }
 };
 
-
-// Delete student by ID
+// =================== DELETE STUDENT ===================
 exports.deleteStudent = async (req, res) => {
   try {
     const student = await Student.findByIdAndDelete(req.params.id);
@@ -261,14 +254,41 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
-
-// Get all students
+// =================== GET ALL STUDENTS ===================
 exports.getAllStudents = async (req, res) => {
   try {
     const students = await Student.find().sort({ createdAt: -1 });
     return res.status(200).json({
       success: true,
       message: 'All students fetched successfully',
+      data: students,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: err.message,
+    });
+  }
+};
+
+// =================== GET STUDENTS BY INSTITUTE ID ===================
+exports.getStudentsByInstituteId = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+
+    if (!instituteId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Institute ID is required',
+      });
+    }
+
+    const students = await Student.find({ instituteId }).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Students fetched successfully',
       data: students,
     });
   } catch (err) {

@@ -44,3 +44,33 @@ exports.getAdmissionQueriesByInstituteId = async (req, res) => {
     });
   }
 };
+
+
+// @desc Delete an admission query by ID
+// @route DELETE /api/admission-queries/:id
+exports.deleteAdmissionQuery = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const query = await AdmissionQuery.findById(id);
+    if (!query) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admission query not found',
+      });
+    }
+
+    await AdmissionQuery.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Admission query deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete admission query',
+      error: error.message,
+    });
+  }
+};

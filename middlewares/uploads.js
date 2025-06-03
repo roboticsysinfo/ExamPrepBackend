@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 
+// Multer Storage Configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); // Make sure this folder exists
@@ -12,16 +13,20 @@ const storage = multer.diskStorage({
   }
 });
 
+// Allow only PDF and image files
 const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === 'image/jpeg' ||
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/webp'
-  ) {
+  const allowedTypes = [
+    'application/pdf',
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp'
+  ];
+
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Unsupported file type'), false);
+    cb(new Error('Only PDF and image files (jpeg, jpg, png, webp) are allowed'), false);
   }
 };
 

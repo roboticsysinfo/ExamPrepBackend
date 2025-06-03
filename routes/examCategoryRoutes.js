@@ -5,7 +5,8 @@ const {
     getAllExamCategories,
     getExamCategoryById,
     updateExamCategory,
-    deleteExamCategory
+    deleteExamCategory,
+    getExamCategoriesByInstituteId
 } = require('../controllers/examCategoryController');
 const upload = require("../middlewares/uploads")
 
@@ -18,6 +19,11 @@ router.get('/exam-categories', getAllExamCategories);
 
 // Update category
 router.put('/update/examCategory/:id', upload.single('e_category_img'), updateExamCategory);
+
+
+
+// Get all categories
+router.get('/exam-categories/institute/:instituteId', getExamCategoriesByInstituteId);
 
 // Delete category
 router.delete('/delete/examCategory:id', deleteExamCategory);

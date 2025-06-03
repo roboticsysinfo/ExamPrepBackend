@@ -1,45 +1,49 @@
-const Test = require('../models/Test');
+const MockTest = require('../models/MockTest');
 
-// 🔹 Create Test
+// 🔹 Create Mock Test
 exports.createTest = async (req, res) => {
   try {
     const {
+      instituteId,
       title,
       exam,
       subject,
       topic,
       questions,
-      difficulty = 'easy',
       duration = 30,
-      totalMarks
+      totalMarks,
+      isPaid = false,
+      price = 0
     } = req.body;
 
-    const test = await Test.create({
+    const test = await MockTest.create({
+      instituteId,
       title,
       exam,
       subject,
       topic,
       questions,
-      difficulty,
       duration,
-      totalMarks
+      totalMarks,
+      isPaid,
+      price
     });
 
     res.status(201).json({
       success: true,
-      message: 'Test created successfully',
+      message: 'Mock test created successfully',
       data: test
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to create test',
+      message: 'Failed to create mock test',
       error: error.message
     });
   }
 };
 
-// 🔹 Update Test
+// 🔹 Update Mock Test
 exports.updateTest = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,12 +53,13 @@ exports.updateTest = async (req, res) => {
       subject,
       topic,
       questions,
-      difficulty,
       duration,
-      totalMarks
+      totalMarks,
+      isPaid,
+      price
     } = req.body;
 
-    const updatedTest = await Test.findByIdAndUpdate(
+    const updatedTest = await MockTest.findByIdAndUpdate(
       id,
       {
         title,
@@ -62,9 +67,10 @@ exports.updateTest = async (req, res) => {
         subject,
         topic,
         questions,
-        difficulty,
         duration,
-        totalMarks
+        totalMarks,
+        isPaid,
+        price
       },
       { new: true }
     );
@@ -72,58 +78,58 @@ exports.updateTest = async (req, res) => {
     if (!updatedTest) {
       return res.status(404).json({
         success: false,
-        message: 'Test not found'
+        message: 'Mock test not found'
       });
     }
 
     res.json({
       success: true,
-      message: 'Test updated successfully',
+      message: 'Mock test updated successfully',
       data: updatedTest
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to update test',
+      message: 'Failed to update mock test',
       error: error.message
     });
   }
 };
 
-// 🔹 Delete Test
+// 🔹 Delete Mock Test
 exports.deleteTest = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedTest = await Test.findByIdAndDelete(id);
+    const deletedTest = await MockTest.findByIdAndDelete(id);
 
     if (!deletedTest) {
       return res.status(404).json({
         success: false,
-        message: 'Test not found'
+        message: 'Mock test not found'
       });
     }
 
     res.json({
       success: true,
-      message: 'Test deleted successfully',
+      message: 'Mock test deleted successfully',
       data: deletedTest
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to delete test',
+      message: 'Failed to delete mock test',
       error: error.message
     });
   }
 };
 
-// 🔹 Get Test by ID
+// 🔹 Get Mock Test by ID
 exports.getTestById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const test = await Test.findById(id)
+    const test = await MockTest.findById(id)
       .populate('exam')
       .populate('subject')
       .populate('topic')
@@ -132,28 +138,28 @@ exports.getTestById = async (req, res) => {
     if (!test) {
       return res.status(404).json({
         success: false,
-        message: 'Test not found'
+        message: 'Mock test not found'
       });
     }
 
     res.json({
       success: true,
-      message: 'Test fetched successfully',
+      message: 'Mock test fetched successfully',
       data: test
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch test',
+      message: 'Failed to fetch mock test',
       error: error.message
     });
   }
 };
 
-// 🔹 Get All Tests
+// 🔹 Get All Mock Tests
 exports.getAllTests = async (req, res) => {
   try {
-    const tests = await Test.find()
+    const tests = await MockTest.find()
       .populate('exam')
       .populate('subject')
       .populate('topic')
@@ -161,14 +167,41 @@ exports.getAllTests = async (req, res) => {
 
     res.json({
       success: true,
-      message: 'All tests fetched successfully',
+      message: 'All mock tests fetched successfully',
       data: tests
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch tests',
+      message: 'Failed to fetch mock tests',
       error: error.message
     });
   }
 };
+
+
+// 🔹 Get Mock Tests by Institute ID
+exports.getMockTestsByInstituteId = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+
+    const tests = await MockTest.find({ instituteId })
+      .populate('exam')
+      .populate('subject')
+      .populate('topic')
+      .populate('questions');
+
+    res.json({
+      success: true,
+      message: 'Mock tests fetched successfully',
+      data: tests
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch mock tests',
+      error: error.message
+    });
+  }
+};
+

@@ -1,14 +1,16 @@
 const ExamCategory = require('../models/ExamCategory');
 
-
 // Create Exam Category
 exports.createExamCategory = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, instituteId } = req.body;
+
+        // Set category image URL, use uploaded file or default placeholder
         let e_category_img = req.file
             ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
             : "https://placehold.co/600x400/png";
 
+        // Validate required fields
         if (!name) {
             return res.status(400).json({
                 success: false,
@@ -16,12 +18,22 @@ exports.createExamCategory = async (req, res) => {
             });
         }
 
+        if (!instituteId) {
+            return res.status(400).json({
+                success: false,
+                message: "Institute ID is required"
+            });
+        }
+
+        // Create new exam category document
         const newCategory = await ExamCategory.create({
             name,
             description,
-            e_category_img
+            e_category_img,
+            instituteId
         });
 
+        // Respond with created category
         return res.status(201).json({
             success: true,
             message: "Exam category created successfully",
@@ -29,6 +41,7 @@ exports.createExamCategory = async (req, res) => {
         });
 
     } catch (error) {
+        // Handle server error
         res.status(500).json({
             success: false,
             message: "Server Error",
@@ -37,10 +50,10 @@ exports.createExamCategory = async (req, res) => {
     }
 };
 
-
 // Get all Exam Categories
 exports.getAllExamCategories = async (req, res) => {
     try {
+        // Fetch all exam categories without filter
         const categories = await ExamCategory.find();
 
         res.status(200).json({
@@ -50,6 +63,7 @@ exports.getAllExamCategories = async (req, res) => {
         });
 
     } catch (error) {
+        // Handle server error
         res.status(500).json({
             success: false,
             message: "Server Error",
@@ -58,6 +72,36 @@ exports.getAllExamCategories = async (req, res) => {
     }
 };
 
+// Get Exam Categories by Institute ID
+exports.getExamCategoriesByInstituteId = async (req, res) => {
+    try {
+        const { instituteId } = req.params;
+
+        if (!instituteId) {
+            return res.status(400).json({
+                success: false,
+                message: "Institute ID is required"
+            });
+        }
+
+        // Find exam categories belonging to the given instituteId
+        const categories = await ExamCategory.find({ instituteId });
+
+        res.status(200).json({
+            success: true,
+            message: `Exam categories for institute ${instituteId} fetched successfully`,
+            data: categories
+        });
+
+    } catch (error) {
+        // Handle server error
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message
+        });
+    }
+};
 
 // Get Exam Category by ID
 exports.getExamCategoryById = async (req, res) => {
@@ -86,7 +130,6 @@ exports.getExamCategoryById = async (req, res) => {
         });
     }
 };
-
 
 // Update Exam Category
 exports.updateExamCategory = async (req, res) => {
@@ -126,7 +169,6 @@ exports.updateExamCategory = async (req, res) => {
         });
     }
 };
-
 
 // Delete Exam Category
 exports.deleteExamCategory = async (req, res) => {

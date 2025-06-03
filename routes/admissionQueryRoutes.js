@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   sendAdmissionQuery,
   getAdmissionQueries,
-  getAdmissionQueriesByInstituteId
+  getAdmissionQueriesByInstituteId,
+  deleteAdmissionQuery
 } = require('../controllers/admissionQueryController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -23,5 +24,7 @@ router.get(
   authorizeRoles('super-admin', 'admin', 'teacher'),
   getAdmissionQueriesByInstituteId
 );
+
+router.delete('/delete/admission-queries/:id', deleteAdmissionQuery);
 
 module.exports = router;

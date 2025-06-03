@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Question = require('../models/Question');
 
 
@@ -5,6 +6,7 @@ const Question = require('../models/Question');
 exports.createQuestion = async (req, res) => {
   try {
     const {
+      instituteId,
       questionText,
       options,
       correctAnswerIndex,
@@ -16,7 +18,9 @@ exports.createQuestion = async (req, res) => {
       topic
     } = req.body;
 
+    
     const question = await Question.create({
+      instituteId,
       questionText,
       options,
       correctAnswerIndex,
@@ -35,7 +39,6 @@ exports.createQuestion = async (req, res) => {
     });
   } catch (error) {
     console.error('Create Question Error:', error);
-
     res.status(500).json({
       success: false,
       message: 'Failed to create question',
@@ -87,6 +90,7 @@ exports.updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     const {
+      instituteId,
       questionText,
       options,
       correctAnswerIndex,
@@ -101,6 +105,7 @@ exports.updateQuestion = async (req, res) => {
     const question = await Question.findByIdAndUpdate(
       id,
       {
+        instituteId,
         questionText,
         options,
         correctAnswerIndex,
@@ -131,6 +136,7 @@ exports.updateQuestion = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to update question',
+      error: error.message,
       data: null,
     });
   }
@@ -160,6 +166,7 @@ exports.deleteQuestion = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to delete question',
+      error: error.message,
       data: null,
     });
   }
@@ -192,6 +199,7 @@ exports.getQuestionById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch question',
+      error: error.message,
       data: null,
     });
   }
@@ -214,22 +222,26 @@ exports.getAllQuestions = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch questions',
+      error: error.message,
       data: null,
     });
   }
 };
 
-// 🔹 Get Questions by Filter
-// GET /api/questions/filter?exam=examId&subject=subjectId&topic=topicId&difficulty=easy
+
+// 🔹 Get Questions by Filter (only selected topic)
 exports.getQuestionsByFilter = async (req, res) => {
   try {
-    const { exam, subject, topic, difficulty } = req.query;
+    // Destructure only the needed params (difficulty removed)
+    const { exam, subject, topic } = req.query;
 
     const filter = {};
+
     if (exam) filter.exam = exam;
     if (subject) filter.subject = subject;
-    if (topic) filter.topic = topic;
-    if (difficulty) filter.difficulty = difficulty;
+
+    // Include only selected topic
+    if (topic) filter.topic = topic; // Assuming topic is string id, no need to convert explicitly if stored as string
 
     const questions = await Question.find(filter)
       .populate('exam')
@@ -246,6 +258,33 @@ exports.getQuestionsByFilter = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch questions',
+      error: error.message
+    });
+  }
+};
+
+
+
+// 🔹 Get Questions by Institute ID
+exports.getQuestionsByInstituteId = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+
+    const questions = await Question.find({ instituteId })
+      .populate('exam')
+      .populate('subject')
+      .populate('topic');
+
+    res.status(200).json({
+      success: true,
+      message: `Questions for institute ${instituteId} fetched successfully`,
+      data: questions,
+    });
+  } catch (error) {
+    console.error('Error fetching questions by institute ID:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch questions by institute ID',
       error: error.message
     });
   }

@@ -1,15 +1,14 @@
 const Exam = require('../models/Exam');
 
-
 // ✅ Create Exam
 exports.createExam = async (req, res) => {
   try {
-    const { name, description, examCategory } = req.body;
+    const { name, description, examCategory, instituteId } = req.body;
 
-    if (!name || !examCategory) {
+    if (!name || !examCategory || !instituteId) {
       return res.status(400).json({
         success: false,
-        message: 'Name and exam category are required',
+        message: 'Name, exam category, and institute ID are required',
         data: null
       });
     }
@@ -20,6 +19,7 @@ exports.createExam = async (req, res) => {
       name,
       description,
       examCategory,
+      instituteId,
       examImage
     });
 
@@ -40,18 +40,18 @@ exports.createExam = async (req, res) => {
   }
 };
 
-
 // ✅ Update Exam
 exports.updateExam = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, examCategory } = req.body;
+    const { name, description, examCategory, instituteId } = req.body;
     const examImage = req.file ? req.file.filename : undefined;
 
     const updateData = {};
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (examCategory) updateData.examCategory = examCategory;
+    if (instituteId) updateData.instituteId = instituteId;
     if (examImage) updateData.examImage = examImage;
 
     const exam = await Exam.findByIdAndUpdate(id, updateData, {
@@ -76,6 +76,30 @@ exports.updateExam = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to update exam',
+      data: null
+    });
+  }
+};
+
+// ✅ Get Exams by Institute ID
+exports.getExamsByInstituteId = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+
+    const exams = await Exam.find({ instituteId })
+      .populate('examCategory')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: 'Exams fetched by institute ID successfully',
+      data: exams
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch exams by institute ID',
       data: null
     });
   }

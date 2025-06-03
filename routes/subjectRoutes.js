@@ -5,7 +5,9 @@ const {
   updateSubject,
   deleteSubject,
   getAllSubjects,
-  getSubjectById
+  getSubjectById,
+  getSubjectsByInstituteId,
+  getSubjectsByExamId
 } = require('../controllers/subjectController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -24,11 +26,17 @@ router.delete('/delete/subject/:id', authenticateUser, authorizeRoles('super-adm
 
 
 // get all subjects
-router.get('/subjects', getAllSubjects);
+router.get('/subjects', authenticateUser, authorizeRoles('super-admin', 'admin', ), getAllSubjects);
 
 
 // get single subject by subject id
-router.get('/getsubjectbyid/:id', getSubjectById);
+router.get('/getsubjectbyid/:id', authenticateUser, authorizeRoles('super-admin', 'admin', ), getSubjectById);
 
+
+// get all subjects
+router.get('/subjects/by-institute/:instituteId', authenticateUser, authorizeRoles('super-admin', 'admin', ), getSubjectsByInstituteId);
+
+
+router.get('/subjects/by-exam/:examId', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), getSubjectsByExamId);
 
 module.exports = router;
