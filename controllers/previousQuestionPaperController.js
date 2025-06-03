@@ -4,7 +4,7 @@ const PreviousQuestionPaper = require('../models/PreviousQuestionPaper');
 
 exports.uploadPreviousQuestionPaper = async (req, res) => {
   try {
-    const { instituteId, examId, subjectId, title } = req.body;
+    const { instituteId, examId, subjectId, title, year } = req.body;
 
     if (!req.file) {
       return res.status(400).json({
@@ -21,6 +21,7 @@ exports.uploadPreviousQuestionPaper = async (req, res) => {
       subjectId,
       title,
       fileUrl,
+      year
     });
 
     await paper.save();

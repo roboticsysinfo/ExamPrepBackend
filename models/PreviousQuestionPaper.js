@@ -22,12 +22,16 @@ const previousQuestionPaperSchema = new mongoose.Schema({
         type: String, required: true
     },   // Example: "Math Paper 2023"
 
+    year: {
+        type: Number, required: true
+    },  
+
     fileUrl: {
         type: String, required: true
     }, // Stored file URL/path
 
     uploadedAt: { type: Date, default: Date.now }
-    
+
 });
 
 module.exports = mongoose.model('PreviousQuestionPaper', previousQuestionPaperSchema);

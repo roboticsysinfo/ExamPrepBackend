@@ -10,12 +10,10 @@ const {
   deletePreviousQuestionPaper,
 } = require('../controllers/previousQuestionPaperController');
 
-const ONE_MB = 1 * 1024 * 1024;
 
 router.post(
   '/upload/previous-question-paper',
   upload.single('file'),
-  minFileSize(ONE_MB),
   uploadPreviousQuestionPaper
 );
 
