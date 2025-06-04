@@ -8,6 +8,7 @@ const {
   getPreviousQuestionPapers,
   getPreviousQuestionPapersBySubject,
   deletePreviousQuestionPaper,
+  getPreviousQuestionPapersByInstitute,
 } = require('../controllers/previousQuestionPaperController');
 
 
@@ -17,10 +18,16 @@ router.post(
   uploadPreviousQuestionPaper
 );
 
+
 router.get('/get/previouseQuestionPapers', getPreviousQuestionPapers);
+
 
 router.get('/subject/previousQuestionPaper/:subjectId', getPreviousQuestionPapersBySubject);
 
+
 router.delete('/delete/previousQuestionPaper/:id', deletePreviousQuestionPaper);
+
+
+router.get('/previous-question-paper/by-institute/:instituteId', getPreviousQuestionPapersByInstitute);
 
 module.exports = router;

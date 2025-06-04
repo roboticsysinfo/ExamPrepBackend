@@ -120,3 +120,28 @@ exports.deletePreviousQuestionPaper = async (req, res) => {
     });
   }
 };
+
+
+exports.getPreviousQuestionPapersByInstitute = async (req, res) => {
+  try {
+    const { instituteId } = req.params;
+
+    const papers = await PreviousQuestionPaper.find({ instituteId })
+      .populate('instituteId', 'name')
+      .populate('examId', 'name')
+      .populate('subjectId', 'name')
+      .sort({ uploadedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: `Previous question papers fetched successfully for institute ${instituteId}`,
+      data: papers,
+    });
+  } catch (error) {
+    console.error('Get papers by institute error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
+  }
+};

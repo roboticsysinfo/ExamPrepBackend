@@ -21,11 +21,10 @@ router.get('/exam-categories', getAllExamCategories);
 router.put('/update/examCategory/:id', upload.single('e_category_img'), updateExamCategory);
 
 
-
 // Get all categories
 router.get('/exam-categories/institute/:instituteId', getExamCategoriesByInstituteId);
 
 // Delete category
-router.delete('/delete/examCategory:id', deleteExamCategory);
+router.delete('/delete/examCategory/:id', deleteExamCategory);
 
 module.exports = router;
