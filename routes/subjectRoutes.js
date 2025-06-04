@@ -39,4 +39,6 @@ router.get('/subjects/by-institute/:instituteId', authenticateUser, authorizeRol
 
 router.get('/subjects/by-exam/:examId', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), getSubjectsByExamId);
 
+
+
 module.exports = router;

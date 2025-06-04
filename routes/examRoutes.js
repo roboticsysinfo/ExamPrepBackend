@@ -6,7 +6,8 @@ const {
     deleteExam,
     getExamById,
     getAllExams,
-    getExamsByInstituteId
+    getExamsByInstituteId,
+    getExamsByCategoryAndInstitute
 } = require('../controllers/examController');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
@@ -37,6 +38,9 @@ router.get('/get/exams', getAllExams); // GET /api/exams
 
 // Get all exams by institute
 router.get('/exams/institute/:instituteId', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), getExamsByInstituteId);
+
+
+router.get('/exams/by-category/:instituteId/:examCategoryId', getExamsByCategoryAndInstitute);
 
 
 module.exports = router;

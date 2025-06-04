@@ -184,3 +184,40 @@ exports.getAllExams = async (req, res) => {
     });
   }
 };
+
+
+// ✅ Get Exams by Exam Category and Institute ID
+
+exports.getExamsByCategoryAndInstitute = async (req, res) => {
+  try {
+    const { instituteId, examCategoryId } = req.params;
+
+    if (!instituteId || !examCategoryId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Institute ID and Exam Category ID are required',
+        data: null,
+      });
+    }
+
+    const exams = await Exam.find({
+      instituteId,
+      examCategory: examCategoryId,
+    })
+      .populate('examCategory')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      message: 'Exams fetched successfully by exam category and institute',
+      data: exams,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch exams by category and institute',
+      data: null,
+    });
+  }
+};
