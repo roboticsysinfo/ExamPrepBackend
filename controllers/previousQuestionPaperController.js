@@ -128,7 +128,7 @@ exports.getPreviousQuestionPapersByInstitute = async (req, res) => {
 
     const papers = await PreviousQuestionPaper.find({ instituteId })
       .populate('instituteId', 'name')
-      .populate('examId', 'name')
+      .populate('examId', 'name examImage')
       .populate('subjectId', 'name')
       .sort({ uploadedAt: -1 });
 
