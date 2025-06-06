@@ -153,18 +153,31 @@ exports.getAllPracticeTests = async (req, res) => {
 exports.getPracticeTestByTopic = async (req, res) => {
   try {
     const { topicId } = req.params;
+    const { difficulty } = req.query; // ✅ difficulty via query param
 
     if (!topicId) {
       return res.status(400).json({ success: false, message: 'TopicId is required' });
     }
 
-    // Practice test topic के आधार पर fetch करो
-    // अगर difficulty भी add है तो filter कर सकते हैं: { topic: topicId, difficulty: req.query.difficulty }
     const test = await PracticeTest.findOne({ topic: topicId })
-      .populate('exam subject topic questions'); // related data भी लाओ
+      .populate({
+        path: 'exam subject topic',
+      })
+      .populate({
+        path: 'questions',
+        match: difficulty ? { difficulty } : {}, // ✅ filter questions if difficulty given
+      });
 
     if (!test) {
       return res.status(404).json({ success: false, message: 'Practice test not found for this topic' });
+    }
+
+    // ❗ If no questions match the difficulty
+    if (difficulty && (!test.questions || test.questions.length === 0)) {
+      return res.status(404).json({
+        success: false,
+        message: `No questions found for topic with difficulty "${difficulty}"`,
+      });
     }
 
     return res.json({ success: true, data: test });
