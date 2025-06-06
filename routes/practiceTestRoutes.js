@@ -30,7 +30,7 @@ router.delete('/delete-practice-test/:id', authenticateUser, authorizeRoles('sup
 router.get('/practice-test/topic/:topicId', practiceTestController.getPracticeTestByTopic);
 
 
-router.post('/practice-test/submit/', practiceTestController.submitPracticeTest);
+router.post('/practice-test/submit', practiceTestController.submitPracticeTest);
 
 
 router.get('/practice-test/result/:studentId/:testId', practiceTestController.getPracticeTestResult)
