@@ -37,7 +37,7 @@ router.get('/getsubjectbyid/:id', authenticateUser, authorizeRoles('super-admin'
 router.get('/subjects/by-institute/:instituteId', authenticateUser, authorizeRoles('super-admin', 'admin', ), getSubjectsByInstituteId);
 
 
-router.get('/subjects/by-exam/:examId', authenticateUser, getSubjectsByExamId);
+router.get('/subjects/by-exam/:examId', getSubjectsByExamId);
 
 
 
