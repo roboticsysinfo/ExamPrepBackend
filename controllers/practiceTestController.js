@@ -242,7 +242,7 @@ exports.submitPracticeTest = async (req, res) => {
       attempted,
       correct,
       wrong,
-      topics: Array.from(topicsSet)
+      topics: test.topic
     });
 
     return res.json({
@@ -254,7 +254,7 @@ exports.submitPracticeTest = async (req, res) => {
         correct,
         wrong,
         score,
-        topics: Array.from(topicsSet)
+        topics: test.topic
       }
     });
 
