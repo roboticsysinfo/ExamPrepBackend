@@ -27,7 +27,12 @@ router.put('/update-practice-test/:id', authenticateUser, authorizeRoles('super-
 // Delete by ID
 router.delete('/delete-practice-test/:id', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher' ), practiceTestController.deletePracticeTest);
 
-
 router.get('/practice-test/topic/:topicId', practiceTestController.getPracticeTestByTopic);
+
+
+router.post('/practice-test/submit/', practiceTestController.submitPracticeTest);
+
+
+router.get('/practice-test/result/:studentId/:testId', practiceTestController.getPracticeTestResult)
 
 module.exports = router;
