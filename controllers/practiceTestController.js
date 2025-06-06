@@ -273,7 +273,6 @@ exports.getPracticeTestResult = async (req, res) => {
       student: studentId,
       test: testId
     })
-      .populate('topic', 'name')
       .populate('test', 'difficulty duration')
       .sort({ submittedAt: -1 });
 
