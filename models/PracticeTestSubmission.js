@@ -9,9 +9,6 @@ const practiceTestSubmissionSchema = new mongoose.Schema({
   correct: Number,
   wrong: Number,
 
-  // ✅ Use ObjectId reference instead of string
-  topic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic', required: true },
-
   submittedAt: { type: Date, default: Date.now }
 });
 
