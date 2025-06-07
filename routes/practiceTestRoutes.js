@@ -36,4 +36,10 @@ router.post('/practice-test/submit', practiceTestController.submitPracticeTest);
 
 router.get('/practice-test/result/:studentId/:testId', practiceTestController.getPracticeTestResult)
 
+
+router.post('/practice-test/submit', practiceTestController.submitPracticeTestAnswers);
+
+
+router.get('/practice-test/result/:resultId', practiceTestController.getPracticeTestResultById);
+
 module.exports = router;

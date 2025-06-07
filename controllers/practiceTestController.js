@@ -1,4 +1,5 @@
 const PracticeTest = require('../models/PracticeTest');
+const PracticeTestResult = require('../models/PracticeTestResult');
 const PracticeTestSubmission = require('../models/PracticeTestSubmission');
 const Student = require('../models/StudentModel');
 
@@ -303,5 +304,114 @@ exports.getPracticeTestResult = async (req, res) => {
     });
   }
 };
+
+
+// submit test answers
+exports.submitPracticeTestAnswers = async (req, res) => {
+  try {
+    const { testId, studentId, answers, timeTaken } = req.body;
+
+    const test = await PracticeTest.findById(testId).populate('questions');
+    if (!test) {
+      return res.status(404).json({ success: false, message: 'Test not found' });
+    }
+
+    const results = [];
+    let correct = 0;
+
+    for (const q of test.questions) {
+      const selected = answers[q._id] || null;
+      const isCorrect = selected === q.correctAnswer;
+      if (selected) {
+        if (isCorrect) correct++;
+        results.push({
+          questionId: q._id,
+          selectedOption: selected,
+          correctOption: q.correctAnswer,
+          isCorrect
+        });
+      }
+    }
+
+    const attempted = Object.keys(answers).length;
+    const wrong = attempted - correct;
+    const score = correct * 1; // or use test.markPerQuestion if available
+
+    // ✅ Save practice test result
+    const result = await PracticeTestResult.create({
+      testId,
+      studentId,
+      totalQuestions: test.questions.length,
+      attempted,
+      correct,
+      wrong,
+      score,
+      answers: results,
+      timeTaken
+    });
+
+    // ✅ Update student scores
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'Student not found' });
+    }
+
+    const updatedPracticeTestScore = (student.practiceTestScore || 0) + score;
+    const updatedMockTestScore = student.mockTestScore || 0;
+    const updatedOverallScore = updatedPracticeTestScore + updatedMockTestScore;
+
+    student.practiceTestScore = updatedPracticeTestScore;
+    student.overallScore = updatedOverallScore;
+
+    await student.save();
+
+    // ✅ Send response
+    res.json({
+      success: true,
+      message: 'Test submitted successfully.',
+      resultId: result._id
+    });
+
+  } catch (err) {
+    console.error('Error submitting practice test:', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+// Get Practice test Result by Result ID
+exports.getPracticeTestResultById = async (req, res) => {
+  try {
+    const { resultId } = req.params;
+
+    const result = await PracticeTestResult.findById(resultId)
+      .populate('testId', 'title exam subject topic')
+      .populate('studentId', 'name');
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Practice test result not found',
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Practice test result fetched successfully',
+      data: result,
+    });
+
+  } catch (error) {
+    console.error('Error fetching Practice test result:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching Practice test result',
+      data: null,
+    });
+  }
+};
+
+
 
 

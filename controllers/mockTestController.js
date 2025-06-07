@@ -348,6 +348,7 @@ exports.submitMockTestAnswers = async (req, res) => {
   }
 };
 
+
 // Get Mock test Result by Result ID
 exports.getMockTestResultById = async (req, res) => {
   try {
