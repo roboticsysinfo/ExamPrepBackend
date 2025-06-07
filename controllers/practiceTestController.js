@@ -321,13 +321,15 @@ exports.submitPracticeTestAnswers = async (req, res) => {
 
     for (const q of test.questions) {
       const selected = answers[q._id] || null;
-      const isCorrect = selected === q.correctAnswer;
+      const correctOption = q.options[q.correctAnswerIndex];
+      const isCorrect = selected === correctOption;
+
       if (selected) {
         if (isCorrect) correct++;
         results.push({
           questionId: q._id,
           selectedOption: selected,
-          correctOption: q.correctAnswer,
+          correctOption,
           isCorrect
         });
       }
