@@ -8,7 +8,8 @@ const {
   getAllTests,
   getMockTestsByInstituteId,
   searchMockTests,
-  filterMockTests
+  filterMockTests,
+  submitMockTestAnswers
 } = require('../controllers/mockTestController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -28,8 +29,14 @@ router.get('/tests', getAllTests);         // Get all tests
 
 router.get('/mock-tests/by-institute/:instituteId', getMockTestsByInstituteId);
 
+
 router.get('/mock-test/search', searchMockTests);
 
+
 router.get('/mock-tests/filter', filterMockTests);
+
+
+router.post('/mock-test/submit', submitMockTestAnswers);
+
 
 module.exports = router;

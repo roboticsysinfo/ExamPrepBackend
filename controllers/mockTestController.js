@@ -1,4 +1,6 @@
 const MockTest = require('../models/MockTest');
+const MockTestResult = require('../models/MockTestResult');
+const Student = require("../models/StudentModel")
 
 // 🔹 Create Mock Test
 exports.createTest = async (req, res) => {
@@ -275,5 +277,73 @@ exports.filterMockTests = async (req, res) => {
       message: 'Failed to filter mock tests',
       error: error.message
     });
+  }
+};
+
+// submit test answers
+
+exports.submitMockTestAnswers = async (req, res) => {
+  try {
+    const { testId, studentId, answers, timeTaken } = req.body;
+
+    const test = await MockTest.findById(testId).populate('questions');
+    if (!test) return res.status(404).json({ success: false, message: 'Test not found' });
+
+    const results = [];
+    let correct = 0;
+
+    for (const q of test.questions) {
+      const selected = answers[q._id] || null;
+      const isCorrect = selected === q.correctAnswer;
+      if (selected) {
+        if (isCorrect) correct++;
+        results.push({
+          questionId: q._id,
+          selectedOption: selected,
+          correctOption: q.correctAnswer,
+          isCorrect
+        });
+      }
+    }
+
+    const attempted = Object.keys(answers).length;
+    const wrong = attempted - correct;
+    const score = correct * 1; // or test.markPerQuestion if dynamic
+
+    // ✅ Save result
+    const result = await MockTestResult.create({
+      testId,
+      studentId,
+      totalQuestions: test.questions.length,
+      attempted,
+      correct,
+      wrong,
+      score,
+      answers: results,
+      timeTaken
+    });
+
+    // ✅ Update student's mockTestScore & overallScore
+    const student = await Student.findById(studentId);
+    if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
+
+    const updatedMockTestScore = (student.mockTestScore || 0) + score;
+    const updatedOverallScore = (student.practiceTestScore || 0) + updatedMockTestScore;
+
+    student.mockTestScore = updatedMockTestScore;
+    student.overallScore = updatedOverallScore;
+
+    await student.save();
+
+    // ✅ Response
+    res.json({
+      success: true,
+      message: 'Test submitted successfully.',
+      resultId: result._id
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
