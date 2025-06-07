@@ -24,6 +24,6 @@ router.get('/single-test/:id',  getTestById);      // Get test by ID
 router.get('/tests', getAllTests);         // Get all tests
 
 
-router.get('/mock-tests/by-institute/:instituteId',  authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), getMockTestsByInstituteId);
+router.get('/mock-tests/by-institute/:instituteId', getMockTestsByInstituteId);
 
 module.exports = router;
