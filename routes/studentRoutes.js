@@ -36,4 +36,8 @@ router.get('/getstudentbyid/:id', authenticateUser, authorizeRoles('super-admin'
 router.get('/get-students-by-institute/:instituteId',authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher') , studentController.getStudentsByInstituteId);
 
 
+
+router.get('/get-leaderboard-data',  studentController.getLeaderboardData);
+
+
 module.exports = router;

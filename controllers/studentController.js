@@ -299,3 +299,45 @@ exports.getStudentsByInstituteId = async (req, res) => {
     });
   }
 };
+
+
+exports.getLeaderboardData = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;  // Current page
+    const limit = parseInt(req.query.limit) || 20; // Items per page
+    const skip = (page - 1) * limit;
+
+    // Total students count
+    const totalStudents = await Student.countDocuments();
+
+    // Paginated & sorted students
+    const students = await Student.find({}, 'name profileImage overallScore')
+      .sort({ overallScore: -1 })  // Descending by score
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Leaderboard fetched successfully',
+      data: {
+        students,
+        pagination: {
+          total: totalStudents,
+          page,
+          limit,
+          totalPages: Math.ceil(totalStudents / limit),
+          hasNextPage: page * limit < totalStudents,
+          hasPrevPage: page > 1
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error('Error fetching leaderboard:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: err.message
+    });
+  }
+};
