@@ -347,3 +347,38 @@ exports.submitMockTestAnswers = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+// Get Mock test Result by Result ID
+exports.getMockTestResultById = async (req, res) => {
+  try {
+    const { resultId } = req.params;
+
+    const result = await MockTestResult.findById(resultId)
+      .populate('testId', 'title exam subject topic')
+      .populate('studentId', 'name');
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'Mock test result not found',
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Mock test result fetched successfully',
+      data: result,
+    });
+
+  } catch (error) {
+    console.error('Error fetching mock test result:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching mock test result',
+      data: null,
+    });
+  }
+};
+
+
