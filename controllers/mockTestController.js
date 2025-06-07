@@ -205,3 +205,75 @@ exports.getMockTestsByInstituteId = async (req, res) => {
   }
 };
 
+
+// 🔍 Search Mock Tests by Title
+exports.searchMockTests = async (req, res) => {
+  try {
+    const { instituteId, search = '' } = req.query;
+
+    const query = {
+      title: { $regex: search, $options: 'i' } // case-insensitive search
+    };
+
+    if (instituteId) {
+      query.instituteId = instituteId;
+    }
+
+    const tests = await MockTest.find(query)
+      .populate('exam')
+      .populate('subject')
+      .populate('topic');
+
+    res.json({
+      success: true,
+      message: 'Search results fetched successfully',
+      data: tests
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Search failed',
+      error: error.message
+    });
+  }
+};
+
+// 🧮 Filter Mock Tests
+
+exports.filterMockTests = async (req, res) => {
+  try {
+    const { instituteId, categoryId, examId, subjectId, topicId } = req.query;
+
+    const query = {};
+
+    if (instituteId) query.instituteId = instituteId;
+    if (examId) query.exam = examId;
+    if (subjectId) query.subject = subjectId;
+    if (topicId) query.topic = topicId;
+
+    // if categoryId provided, find exams under it
+    if (categoryId) {
+      const Exam = require('../models/Exam');
+      const exams = await Exam.find({ examCategoryId: categoryId }).select('_id');
+      const examIds = exams.map(exam => exam._id);
+      query.exam = { $in: examIds };
+    }
+
+    const tests = await MockTest.find(query)
+      .populate('exam')
+      .populate('subject')
+      .populate('topic');
+
+    res.json({
+      success: true,
+      message: 'Filtered mock tests fetched successfully',
+      data: tests
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to filter mock tests',
+      error: error.message
+    });
+  }
+};

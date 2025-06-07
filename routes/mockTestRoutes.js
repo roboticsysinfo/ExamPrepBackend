@@ -6,7 +6,9 @@ const {
   deleteTest,
   getTestById,
   getAllTests,
-  getMockTestsByInstituteId
+  getMockTestsByInstituteId,
+  searchMockTests,
+  filterMockTests
 } = require('../controllers/mockTestController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -25,5 +27,9 @@ router.get('/tests', getAllTests);         // Get all tests
 
 
 router.get('/mock-tests/by-institute/:instituteId', getMockTestsByInstituteId);
+
+router.get('/mock-test/search', searchMockTests);
+
+router.get('/mock-tests/filter', filterMockTests);
 
 module.exports = router;
