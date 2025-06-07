@@ -17,7 +17,7 @@ router.get('/get/practiceTestById/:id', authenticateUser, authorizeRoles('super-
 
 
 // Get all by Institute ID
-router.get('/practice-test/by-institute/:instituteId', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher' ), practiceTestController.getPracticeTestsByInstituteId);
+router.get('/practice-test/by-institute/:instituteId', practiceTestController.getPracticeTestsByInstituteId);
 
 
 // Update by ID
@@ -26,6 +26,7 @@ router.put('/update-practice-test/:id', authenticateUser, authorizeRoles('super-
 
 // Delete by ID
 router.delete('/delete-practice-test/:id', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher' ), practiceTestController.deletePracticeTest);
+
 
 router.get('/practice-test/topic/:topicId', practiceTestController.getPracticeTestByTopic);
 
