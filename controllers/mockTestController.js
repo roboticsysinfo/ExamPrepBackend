@@ -282,6 +282,7 @@ exports.filterMockTests = async (req, res) => {
 
 // submit test answers
 
+
 exports.submitMockTestAnswers = async (req, res) => {
   try {
     const { testId, studentId, answers, timeTaken } = req.body;
@@ -294,13 +295,15 @@ exports.submitMockTestAnswers = async (req, res) => {
 
     for (const q of test.questions) {
       const selected = answers[q._id] || null;
-      const isCorrect = selected === q.correctAnswer;
+      const correctOption = q.options[q.correctAnswerIndex];
+      const isCorrect = selected === correctOption;
+
       if (selected) {
         if (isCorrect) correct++;
         results.push({
           questionId: q._id,
           selectedOption: selected,
-          correctOption: q.correctAnswer,
+          correctOption,
           isCorrect
         });
       }
@@ -308,9 +311,8 @@ exports.submitMockTestAnswers = async (req, res) => {
 
     const attempted = Object.keys(answers).length;
     const wrong = attempted - correct;
-    const score = correct * 1; // or test.markPerQuestion if dynamic
+    const score = correct * 1;
 
-    // ✅ Save result
     const result = await MockTestResult.create({
       testId,
       studentId,
@@ -323,7 +325,6 @@ exports.submitMockTestAnswers = async (req, res) => {
       timeTaken
     });
 
-    // ✅ Update student's mockTestScore & overallScore
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
 
@@ -332,10 +333,8 @@ exports.submitMockTestAnswers = async (req, res) => {
 
     student.mockTestScore = updatedMockTestScore;
     student.overallScore = updatedOverallScore;
-
     await student.save();
 
-    // ✅ Response
     res.json({
       success: true,
       message: 'Test submitted successfully.',
@@ -347,6 +346,8 @@ exports.submitMockTestAnswers = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+
 
 
 // Get Mock test Result by Result ID
