@@ -390,8 +390,15 @@ exports.getMockTestHistoryByStudentId = async (req, res) => {
     const { studentId } = req.params;
 
     const history = await MockTestResult.find({ studentId })
-      .populate('testId', 'title exam subject topic totalMarks duration')
-      .sort({ submittedAt: -1 }); // latest first
+      .populate({
+        path: 'testId',
+        select: 'title topic totalMarks duration',
+        populate: [
+          { path: 'exam', select: 'name' },
+          { path: 'subject', select: 'name' },
+        ],
+      })
+      .sort({ submittedAt: -1 });
 
     if (!history || history.length === 0) {
       return res.status(404).json({
@@ -416,5 +423,6 @@ exports.getMockTestHistoryByStudentId = async (req, res) => {
     });
   }
 };
+
 
 
