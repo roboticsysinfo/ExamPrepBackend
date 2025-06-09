@@ -40,4 +40,6 @@ router.get('/get-students-by-institute/:instituteId',authenticateUser, authorize
 router.get('/get-leaderboard-data',  studentController.getLeaderboardData);
 
 
+router.get('/overall-score-rank/:studentId', studentController.getStudentOverallRank);
+
 module.exports = router;

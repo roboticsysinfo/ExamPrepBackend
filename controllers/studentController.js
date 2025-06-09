@@ -341,3 +341,55 @@ exports.getLeaderboardData = async (req, res) => {
     });
   }
 };
+
+// get studnet overall score and rank
+
+exports.getStudentOverallRank = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    if (!studentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Student ID is required'
+      });
+    }
+
+    // ✅ Get all students sorted by overallScore descending
+    const allStudents = await Student.find({}, 'name profileImage overallScore mockTestScore practiceTestScore')
+      .sort({ overallScore: -1 });
+
+    // ✅ Find rank
+    const rank = allStudents.findIndex(student => student._id.toString() === studentId) + 1;
+
+    if (rank === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found in leaderboard'
+      });
+    }
+
+    const student = allStudents[rank - 1];
+
+    return res.status(200).json({
+      success: true,
+      message: 'Student overall rank fetched successfully',
+      data: {
+        studentId,
+        name: student.name,
+        profileImage: student.profileImage,
+        mockTestScore: student.mockTestScore || 0,
+        practiceTestScore: student.practiceTestScore || 0,
+        overallScore: student.overallScore || 0,
+        rank
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching student rank:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching rank'
+    });
+  }
+};
