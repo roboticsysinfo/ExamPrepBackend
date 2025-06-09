@@ -34,12 +34,6 @@ router.get('/practice-test/topic/:topicId', practiceTestController.getPracticeTe
 router.post('/practice-test/submit', practiceTestController.submitPracticeTestAnswers);
 
 
-router.get('/practice-test/result/:studentId/:testId', practiceTestController.getPracticeTestResult)
-
-
-router.post('/practice-test/submit', practiceTestController.submitPracticeTestAnswers);
-
-
 router.get('/practice-test/result/:resultId', practiceTestController.getPracticeTestResultById);
 
 
