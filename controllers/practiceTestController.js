@@ -202,6 +202,10 @@ exports.submitPracticeTest = async (req, res) => {
   try {
     const { studentId, testId, answers } = req.body;
 
+    console.log("studentId", studentId)
+    console.log("testId", testId)
+    console.log("answers", answers)
+
     if (!studentId || !testId || !answers) {
       return res.status(400).json({ success: false, message: 'Required fields missing' });
     }
