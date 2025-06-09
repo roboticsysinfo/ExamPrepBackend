@@ -16,7 +16,8 @@ const examCategoryRoutes = require("./routes/examCategoryRoutes");
 const admissionQueryRoutes = require("./routes/admissionQueryRoutes");
 const instituteRoutes = require("./routes/instituteRoutes")
 const previousQuestionPaperRoutes = require("./routes/previousQuestionPaperRoutes");
-const practiceTestRoutes = require("./routes/practiceTestRoutes")
+const practiceTestRoutes = require("./routes/practiceTestRoutes");
+const doubtRoutes = require("../routes/doubtRoutes");
 
 const app = express();
 
@@ -60,6 +61,8 @@ app.use("/api", instituteRoutes)
 app.use("/api", previousQuestionPaperRoutes)
 
 app.use("/api", practiceTestRoutes)
+
+app.use("/api", doubtRoutes)
 
 // ========= Routes end=============
 

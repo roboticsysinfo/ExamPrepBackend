@@ -30,7 +30,7 @@ const doubtSchema = new mongoose.Schema({
     answer: String,
     answeredBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Faculty'
+        ref: 'User'
     },
     createdAt: {
         type: Date,
