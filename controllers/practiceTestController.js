@@ -51,13 +51,17 @@ exports.getPracticeTestById = async (req, res) => {
   }
 };
 
+
 // Get Practice Tests by Institute ID
 exports.getPracticeTestsByInstituteId = async (req, res) => {
   try {
     const instituteId = req.params.instituteId;
+
     const tests = await PracticeTest.find({ instituteId })
       .populate('exam subject topic')
+      .populate('questions') // 🔥 Add this line to get full question details
       .sort({ createdAt: -1 });
+
     res.json({
       success: true,
       data: tests,
@@ -71,6 +75,8 @@ exports.getPracticeTestsByInstituteId = async (req, res) => {
     });
   }
 };
+
+
 
 // Update Practice Test by ID
 exports.updatePracticeTest = async (req, res) => {
