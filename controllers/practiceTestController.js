@@ -428,8 +428,27 @@ exports.getPracticeTestHistoryByStudentId = async (req, res) => {
     }
 
     const results = await PracticeTestResult.find({ studentId })
-      .populate('testId', 'title exam subject topic') // populate test info
+      .populate({
+        path: 'testId',
+        select: 'title topic totalMarks duration',
+        populate: [
+          { path: 'exam', select: 'name' },
+          { path: 'subject', select: 'name' },
+        ],
+      })
+      .populate({
+        path: 'answers.questionId',   // populate questionId inside answers array
+        select: 'questionText'        // only questionText field
+      })
       .sort({ submittedAt: -1 }); // latest first
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No practice test history found for this student',
+        data: []
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -438,10 +457,10 @@ exports.getPracticeTestHistoryByStudentId = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching test history:', error);
+    console.error('Error fetching practice test history:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error while fetching test history',
+      message: 'Internal server error while fetching practice test history',
     });
   }
 };
