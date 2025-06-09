@@ -17,7 +17,7 @@ const admissionQueryRoutes = require("./routes/admissionQueryRoutes");
 const instituteRoutes = require("./routes/instituteRoutes")
 const previousQuestionPaperRoutes = require("./routes/previousQuestionPaperRoutes");
 const practiceTestRoutes = require("./routes/practiceTestRoutes");
-const doubtRoutes = require("../routes/doubtRoutes");
+const doubtRoutes = require("./routes/doubtRoutes");
 
 const app = express();
 
