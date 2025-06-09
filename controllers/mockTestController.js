@@ -398,6 +398,10 @@ exports.getMockTestHistoryByStudentId = async (req, res) => {
           { path: 'subject', select: 'name' },
         ],
       })
+      .populate({
+        path: 'answers.questionId',   // populate nested questionId inside answers array
+        select: 'questionText'        // get only questionText field from Question
+      })
       .sort({ submittedAt: -1 });
 
     if (!history || history.length === 0) {
@@ -423,6 +427,7 @@ exports.getMockTestHistoryByStudentId = async (req, res) => {
     });
   }
 };
+
 
 
 
