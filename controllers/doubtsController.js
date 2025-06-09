@@ -1,10 +1,10 @@
-const Doubt = require('../models/Doubt');
+const Doubt = require('../models/Doubts');
 
 // ✅ 1. Submit Doubt
 exports.submitDoubt = async (req, res) => {
 
   try {
-    
+
     const { studentId, exam, subject, topic, question } = req.body;
 
     const newDoubt = new Doubt({ studentId, exam, subject, topic, question });
