@@ -42,4 +42,8 @@ router.post('/practice-test/submit', practiceTestController.submitPracticeTestAn
 
 router.get('/practice-test/result/:resultId', practiceTestController.getPracticeTestResultById);
 
+
+router.get('/practice-test-history/:studentId', practiceTestController.getPracticeTestHistoryByStudentId);
+
+
 module.exports = router;

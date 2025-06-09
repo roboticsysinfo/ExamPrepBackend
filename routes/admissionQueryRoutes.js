@@ -13,9 +13,9 @@ const { authorizeRoles } = require('../middlewares/roleMiddleware');
 // @route   POST /api/admission-queries
 router.post('/send-admission-query', sendAdmissionQuery);
 
-
 // @route   GET /api/admission-queries
 // router.get('/get-admission-query', authenticateUser, authorizeRoles('super-admin'), getAdmissionQueries);
+
 
 // New route to get queries by institute ID
 router.get(
@@ -25,6 +25,8 @@ router.get(
   getAdmissionQueriesByInstituteId
 );
 
+
 router.delete('/delete/admission-queries/:id', deleteAdmissionQuery);
+
 
 module.exports = router;

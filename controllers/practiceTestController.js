@@ -415,5 +415,35 @@ exports.getPracticeTestResultById = async (req, res) => {
 };
 
 
+// Get Practice Test History by Student ID
+exports.getPracticeTestHistoryByStudentId = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    if (!studentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Student ID is required',
+      });
+    }
+
+    const results = await PracticeTestResult.find({ studentId })
+      .populate('testId', 'title exam subject topic') // populate test info
+      .sort({ submittedAt: -1 }); // latest first
+
+    res.status(200).json({
+      success: true,
+      message: 'Practice test history fetched successfully',
+      data: results,
+    });
+
+  } catch (error) {
+    console.error('Error fetching test history:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching test history',
+    });
+  }
+};
 
 

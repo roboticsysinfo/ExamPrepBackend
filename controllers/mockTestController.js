@@ -384,3 +384,37 @@ exports.getMockTestResultById = async (req, res) => {
 };
 
 
+// 🔹 Get Mock Test History by Student ID
+exports.getMockTestHistoryByStudentId = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const history = await MockTestResult.find({ studentId })
+      .populate('testId', 'title exam subject topic totalMarks duration')
+      .sort({ submittedAt: -1 }); // latest first
+
+    if (!history || history.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No mock test history found for this student',
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Mock test history fetched successfully',
+      data: history
+    });
+
+  } catch (error) {
+    console.error('Error fetching mock test history:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error while fetching mock test history',
+      data: null
+    });
+  }
+};
+
+

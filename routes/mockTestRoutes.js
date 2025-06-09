@@ -10,7 +10,8 @@ const {
   searchMockTests,
   filterMockTests,
   submitMockTestAnswers,
-  getMockTestResultById
+  getMockTestResultById,
+  getMockTestHistoryByStudentId
 } = require('../controllers/mockTestController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -41,6 +42,9 @@ router.post('/mock-test/submit', submitMockTestAnswers);
 
 
 router.get('/mock-test/result/:resultId', getMockTestResultById);
+
+// get student's mock test history
+router.get('/mock-test-history/:studentId', getMockTestHistoryByStudentId);
 
 
 module.exports = router;
