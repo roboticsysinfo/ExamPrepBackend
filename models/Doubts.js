@@ -3,7 +3,11 @@
 const mongoose = require('mongoose');
 
 const doubtSchema = new mongoose.Schema({
-
+    instituteId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Institute'
+    },
     studentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student',

@@ -2,12 +2,18 @@ const Doubt = require('../models/Doubts');
 
 // ✅ 1. Submit Doubt
 exports.submitDoubt = async (req, res) => {
-
   try {
+    const { instituteId, studentId, exam, subject, topic, question } = req.body;
 
-    const { studentId, exam, subject, topic, question } = req.body;
+    // instituteId is now required
+    if (!instituteId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Institute ID is required',
+      });
+    }
 
-    const newDoubt = new Doubt({ studentId, exam, subject, topic, question });
+    const newDoubt = new Doubt({ instituteId, studentId, exam, subject, topic, question });
     await newDoubt.save();
 
     res.status(201).json({
@@ -23,6 +29,7 @@ exports.submitDoubt = async (req, res) => {
     });
   }
 };
+
 
 // ✅ 2. Get All Doubts
 exports.getAllDoubts = async (req, res) => {
