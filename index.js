@@ -18,6 +18,7 @@ const instituteRoutes = require("./routes/instituteRoutes")
 const previousQuestionPaperRoutes = require("./routes/previousQuestionPaperRoutes");
 const practiceTestRoutes = require("./routes/practiceTestRoutes");
 const doubtRoutes = require("./routes/doubtRoutes");
+const notificationRoutes = require("./routes/notificationRoutes")
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use("/api", practiceTestRoutes)
 
 app.use("/api", doubtRoutes)
 
+app.use("/api", notificationRoutes)
 // ========= Routes end=============
 
 
