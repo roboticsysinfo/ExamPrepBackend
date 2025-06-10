@@ -19,7 +19,7 @@ router.post('/student/verify-otp', studentController.verifyOtp);
 
 
 // update student info
-router.put('/update/student/:id', upload.single('profileImage'), authenticateUser, authorizeRoles('super-admin', 'admin', "teacher"), studentController.updateStudent);
+router.put('/update/student/:id', upload.single('profileImage'), studentController.updateStudent);
 
 
 // delete student 
