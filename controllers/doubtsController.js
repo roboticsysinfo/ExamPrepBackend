@@ -66,9 +66,9 @@ exports.getDoubtsByInstituteId = async (req, res) => {
         match: { instituteId: instituteId }
       })
       .populate('answeredBy', 'name email')
-      .populate('examId', 'name')      // 👈 Exam Name
-      .populate('subjectId', 'name')   // 👈 Subject Name
-      .populate('topicId', 'name')     // 👈 Topic Name
+      .populate('exam', 'name')      // ✅ Get exam name
+      .populate('subject', 'name')   // ✅ Get subject name
+      .populate('topic', 'name')     // ✅ Get topic name
       .sort({ createdAt: -1 });
 
     const filteredDoubts = doubts.filter(d => d.studentId !== null);
@@ -86,6 +86,7 @@ exports.getDoubtsByInstituteId = async (req, res) => {
     });
   }
 };
+
 
 
 
