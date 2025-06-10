@@ -3,7 +3,7 @@ const Doubt = require('../models/Doubts');
 // ✅ 1. Submit Doubt
 exports.submitDoubt = async (req, res) => {
   try {
-    
+
     const { instituteId, studentId, exam, subject, topic, question } = req.body;
 
     // instituteId is now required
@@ -54,6 +54,7 @@ exports.getAllDoubts = async (req, res) => {
   }
 };
 
+
 // ✅ 3. Get Doubts by Institute ID
 exports.getDoubtsByInstituteId = async (req, res) => {
   try {
@@ -65,6 +66,9 @@ exports.getDoubtsByInstituteId = async (req, res) => {
         match: { instituteId: instituteId }
       })
       .populate('answeredBy', 'name email')
+      .populate('examId', 'name')      // 👈 Exam Name
+      .populate('subjectId', 'name')   // 👈 Subject Name
+      .populate('topicId', 'name')     // 👈 Topic Name
       .sort({ createdAt: -1 });
 
     const filteredDoubts = doubts.filter(d => d.studentId !== null);
@@ -82,6 +86,9 @@ exports.getDoubtsByInstituteId = async (req, res) => {
     });
   }
 };
+
+
+
 
 // ✅ 4. Answer Doubt
 exports.answerDoubt = async (req, res) => {
