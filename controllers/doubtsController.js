@@ -3,6 +3,7 @@ const Doubt = require('../models/Doubts');
 // ✅ 1. Submit Doubt
 exports.submitDoubt = async (req, res) => {
   try {
+    
     const { instituteId, studentId, exam, subject, topic, question } = req.body;
 
     // instituteId is now required

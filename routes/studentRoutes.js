@@ -30,7 +30,7 @@ router.get('/students', authenticateUser, authorizeRoles('super-admin'), student
 
 
 // get single student info
-router.get('/getstudentbyid/:id', authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher'), studentController.getStudentById);
+router.get('/getstudentbyid/:id', authenticateUser, authorizeRoles('student'), studentController.getStudentById);
 
 
 router.get('/get-students-by-institute/:instituteId',authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher') , studentController.getStudentsByInstituteId);
