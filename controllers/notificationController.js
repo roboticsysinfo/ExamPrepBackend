@@ -24,6 +24,7 @@ exports.sendNotification = async (req, res) => {
   }
 };
 
+
 // ✅ Send bulk notification to all students of an institute
 exports.sendNotificationToAll = async (req, res) => {
   try {

@@ -1,4 +1,5 @@
 const Doubt = require('../models/Doubts');
+const Notification = require('../models/Notification');
 
 // ✅ 1. Submit Doubt
 exports.submitDoubt = async (req, res) => {
@@ -92,36 +93,66 @@ exports.getDoubtsByInstituteId = async (req, res) => {
 
 
 // ✅ 4. Answer Doubt
+// exports.answerDoubt = async (req, res) => {
+//   try {
+//     const { answer, answeredBy } = req.body;
+//     const { doubtId } = req.params;
+
+//     const doubt = await Doubt.findById(doubtId);
+//     if (!doubt) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'Doubt not found',
+//         error: 'Invalid doubt ID'
+//       });
+//     }
+
+//     doubt.answer = answer;
+//     doubt.answeredBy = answeredBy;
+//     doubt.status = 'answered';
+//     await doubt.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Doubt answered successfully',
+//       data: doubt
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: 'Failed to answer doubt',
+//       error: error.message
+//     });
+//   }
+// };
+
 exports.answerDoubt = async (req, res) => {
   try {
-    const { answer, answeredBy } = req.body;
     const { doubtId } = req.params;
+    const { answer, answeredBy } = req.body;
 
-    const doubt = await Doubt.findById(doubtId);
-    if (!doubt) {
-      return res.status(404).json({
-        success: false,
-        message: 'Doubt not found',
-        error: 'Invalid doubt ID'
-      });
-    }
+    const updatedDoubt = await Doubt.findByIdAndUpdate(
+      doubtId,
+      { answer, answeredBy, status: 'answered' },
+      { new: true }
+    ).populate('studentId instituteId');
 
-    doubt.answer = answer;
-    doubt.answeredBy = answeredBy;
-    doubt.status = 'answered';
-    await doubt.save();
+    // ✅ Send notification to student after answer
+    await Notification.create({
+      userId: updatedDoubt.studentId._id,
+      instituteId: updatedDoubt.instituteId._id,
+      type: 'answered',
+      title: 'Your doubt has been answered!',
+      message: `Answer: ${updatedDoubt.answer}`
+    });
 
     res.status(200).json({
       success: true,
       message: 'Doubt answered successfully',
-      data: doubt
+      data: updatedDoubt
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to answer doubt',
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: 'Error answering doubt', error: error.message });
   }
 };
 
