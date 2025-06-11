@@ -41,7 +41,7 @@ router.put('/user-update/:id', authenticateUser, authorizeRoles('super-admin', '
 
 
 // Delete user - Only super-admin
-router.delete('/user-delete/:id', authenticateUser, authorizeRoles('super-admin'), deleteUser);
+router.delete('/user-delete/:id', authenticateUser, authorizeRoles('super-admin', 'admin'), deleteUser);
 
 
 // Assign role - Only super-admin
