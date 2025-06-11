@@ -25,7 +25,7 @@ router.post('/login', loginUser);
 
 router.post('/teacher/login-otp', loginWithOtp);
 
-router.post('/teacher/verify-otp', verifyOtp);
+router.post('/verify-otp', verifyOtp);
 
 
 // Get all users - Only super-admin or admin can view
