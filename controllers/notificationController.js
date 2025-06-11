@@ -57,7 +57,7 @@ exports.sendNotificationToAll = async (req, res) => {
     }
 };
 
-// ✅ Get notifications for a student in a specific institute
+
 // ✅ Get notifications for a student in a specific institute (with unread count)
 exports.getNotificationsByUser = async (req, res) => {
     try {
@@ -125,3 +125,32 @@ exports.markOneAsRead = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error marking as read', error: error.message });
     }
 };
+
+
+// 🔹 Get all "doubt" type notifications for an institute
+exports.getNotificationsByInstitute = async (req, res) => {
+    try {
+        const { instituteId } = req.params;
+
+        const notifications = await Notification.find({
+            instituteId,
+            type: 'doubt'
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            message: 'Doubt notifications fetched successfully',
+            data: notifications
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching doubt notifications',
+            error: error.message
+        });
+    }
+};
+
+
+
+

@@ -2,13 +2,21 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/jwt');
 
-
 // Create new user
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, password, role, instituteId } = req.body;
+        const { name, email, password, role, instituteId, phoneNumber } = req.body;
 
-        // 🔐 CASE 1: No logged-in user (initial super-admin creation)
+        if (!email || !password || !phoneNumber) {
+            return res.status(400).json({ success: false, message: 'Email, password, and phone number are required' });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: 'User with this email already exists' });
+
+        const existingPhone = await User.findOne({ phoneNumber });
+        if (existingPhone) return res.status(400).json({ message: 'Phone number already in use' });
+
         if (!req.user) {
             if (role !== 'super-admin') {
                 return res.status(403).json({
@@ -17,18 +25,14 @@ exports.createUser = async (req, res) => {
                 });
             }
 
-            // Continue to create super-admin
-            const existingUser = await User.findOne({ email });
-            if (existingUser) return res.status(400).json({ message: 'User already exists' });
-
             const hashedPassword = await bcrypt.hash(password, 10);
-
             const user = new User({
                 name,
                 email,
                 password: hashedPassword,
+                phoneNumber,
                 role,
-                instituteId: null,  // super-admin doesn't need this
+                instituteId: null,
                 createdBy: null
             });
 
@@ -36,7 +40,6 @@ exports.createUser = async (req, res) => {
             return res.status(201).json({ success: true, user });
         }
 
-        // 🔐 CASE 2: Authenticated user exists
         const currentUserRole = req.user.role;
 
         if (
@@ -50,15 +53,12 @@ exports.createUser = async (req, res) => {
             });
         }
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: 'User already exists' });
-
         const hashedPassword = await bcrypt.hash(password, 10);
-
         const user = new User({
             name,
             email,
             password: hashedPassword,
+            phoneNumber,
             role,
             instituteId,
             createdBy: req.user._id,
@@ -72,9 +72,7 @@ exports.createUser = async (req, res) => {
     }
 };
 
-
-
-// Login User
+// Login User with email/password
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -94,6 +92,7 @@ exports.loginUser = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phoneNumber: user.phoneNumber,
                 role: user.role,
                 instituteId: user.instituteId,
             },
@@ -103,8 +102,70 @@ exports.loginUser = async (req, res) => {
     }
 };
 
+// ✅ OTP Login - Step 1
+exports.loginWithOtp = async (req, res) => {
+    try {
+        const { phoneNumber } = req.body;
 
-// Get all users
+        if (!phoneNumber) {
+            return res.status(400).json({ success: false, message: 'Phone number is required' });
+        }
+
+        const user = await User.findOne({ phoneNumber, role: 'teacher' });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Teacher with this phone number not found' });
+        }
+
+        // Simulate sending OTP
+        return res.status(200).json({
+            success: true,
+            message: 'OTP sent successfully (mock)',
+            mockOtp: '123456', // 🔐 For testing only
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// ✅ OTP Verify - Step 2
+exports.verifyOtp = async (req, res) => {
+    try {
+        const { phoneNumber, otp } = req.body;
+
+        if (!phoneNumber || !otp) {
+            return res.status(400).json({ success: false, message: 'Phone number and OTP are required' });
+        }
+
+        const user = await User.findOne({ phoneNumber, role: 'teacher' });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Teacher with this phone number not found' });
+        }
+
+        if (otp !== '123456') {
+            return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        }
+
+        const token = generateToken(user);
+
+        res.status(200).json({
+            success: true,
+            message: 'OTP verified successfully',
+            token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                role: user.role,
+                instituteId: user.instituteId,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Other CRUD functions
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password');
@@ -114,8 +175,6 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-
-// Get single user
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
@@ -126,24 +185,22 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-
-// Update user
 exports.updateUser = async (req, res) => {
     try {
-        const { name, email, instituteId } = req.body;
+        const { name, email, instituteId, phoneNumber } = req.body;
+
         const user = await User.findByIdAndUpdate(
             req.params.id,
-            { name, email, instituteId },
+            { name, email, instituteId, phoneNumber },
             { new: true }
         );
+
         res.json({ success: true, user });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-
-// Delete user
 exports.deleteUser = async (req, res) => {
     try {
         await User.findByIdAndDelete(req.params.id);
@@ -153,9 +210,6 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-
-
-// Assign Role
 exports.assignRole = async (req, res) => {
     try {
         const { role } = req.body;
@@ -173,6 +227,18 @@ exports.assignRole = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.getUsersByInstituteId = async (req, res) => {
+    try {
+        const { instituteId } = req.params;
+
+        const users = await User.find({ instituteId }).select('-password');
+
+        res.json({ success: true, users });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

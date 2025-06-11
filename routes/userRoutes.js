@@ -7,7 +7,10 @@ const {
   updateUser,
   deleteUser,
   assignRole,
-  loginUser
+  loginUser,
+  getUsersByInstituteId,
+  loginWithOtp,
+  verifyOtp
 } = require('../controllers/userController');
 
 const { authenticateUser } = require('../middlewares/authMiddleWare');
@@ -19,6 +22,10 @@ router.post('/create-user', authenticateUser, authorizeRoles('super-admin', 'adm
 
 
 router.post('/login', loginUser);
+
+router.post('/teacher/login-otp', loginWithOtp);
+
+router.post('/teacher/verify-otp', verifyOtp);
 
 
 // Get all users - Only super-admin or admin can view
@@ -40,5 +47,7 @@ router.delete('/user-delete/:id', authenticateUser, authorizeRoles('super-admin'
 // Assign role - Only super-admin
 router.put('/user/assign-role/:id', authenticateUser, authorizeRoles('super-admin'), assignRole);
 
+
+router.get('/users/by-institute/:instituteId', getUsersByInstituteId);
 
 module.exports = router;

@@ -17,4 +17,8 @@ router.put('/read-all/user/:userId/institute/:instituteId', notificationControll
 // 🔹 Mark one as read
 router.put('/read-one/:notificationId', notificationController.markOneAsRead);
 
+
+// Get all notifications by institute (without userId)
+router.get('/notifications/by-institute/:instituteId', notificationController.getNotificationsByInstitute);
+
 module.exports = router;
