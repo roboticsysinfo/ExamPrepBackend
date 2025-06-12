@@ -83,7 +83,7 @@ exports.updatePracticeTest = async (req, res) => {
     const updatedData = req.body;
     updatedData.updatedAt = Date.now();
 
-    const updatedTest = await PracticeSubmission.findByIdAndUpdate(
+    const updatedTest = await PracticeTest.findByIdAndUpdate(
       req.params.id,
       updatedData,
       { new: true }
