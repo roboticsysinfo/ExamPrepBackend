@@ -7,9 +7,7 @@ exports.sendAdmissionQuery = async (req, res) => {
   try {
     const newQuery = new AdmissionQuery(req.body);
 
-    console.log("newQuery", newQuery)
-
-    const savedQuery = await AdmissionQuery.save();
+    const savedQuery = await newQuery.save();
     res.status(201).json({
       success: true,
       message: 'Admission query submitted successfully',

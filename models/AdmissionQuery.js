@@ -27,7 +27,6 @@ const admissionQuerySchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         required: true,
-        match: /^[6-9]\d{9}$/
     },
     city: {
         type: String,
