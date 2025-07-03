@@ -24,7 +24,7 @@ const studentSchema = new mongoose.Schema({
   village: { type: String },
   profileImage: {
     type: String,
-    default: 'https://dummyimage.com/150x150/cccccc/000000&text=Profile'
+    default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
   },
   role: {
     type: String,

@@ -175,7 +175,7 @@ exports.updateStudent = async (req, res) => {
     const updateData = { ...req.body };
 
     if (req.file) {
-      updateData.profileImage = req.file.path;
+      updateData.profileImage = `/uploads/${req.file.filename}`;
     }
 
     const student = await Student.findByIdAndUpdate(req.params.id, updateData, {
@@ -202,6 +202,9 @@ exports.updateStudent = async (req, res) => {
     });
   }
 };
+
+
+
 
 // =================== GET STUDENT BY ID ===================
 exports.getStudentById = async (req, res) => {
