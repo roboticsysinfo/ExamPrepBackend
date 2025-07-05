@@ -3,9 +3,9 @@ const Topic = require('../models/Topic');
 // 🔹 Create Topic
 exports.createTopic = async (req, res) => {
   try {
-    const { subject, name, instituteId } = req.body;
+    const { subject, name, instituteId, topicDetail } = req.body;
 
-    const topic = await Topic.create({ subject, name, instituteId });
+    const topic = await Topic.create({ subject, name, instituteId, topicDetail });
 
     res.status(201).json({
       success: true,
