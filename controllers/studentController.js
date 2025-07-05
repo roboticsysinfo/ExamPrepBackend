@@ -2,6 +2,7 @@ const Student = require('../models/StudentModel');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'mock_secret';
 
+
 // Generate unique 10 digit number
 const generateRegNumber = async () => {
   let regNumber;
@@ -18,7 +19,9 @@ const generateRegNumber = async () => {
 
 // =================== REGISTER STUDENT ===================
 exports.registerStudent = async (req, res) => {
+
   try {
+
     const {
       instituteId,
       name,
