@@ -1,7 +1,6 @@
 const AdmissionQuery = require('../models/AdmissionQuery');
 
 
-// @desc Send a new admission query
 // @route POST /api/admission-queries
 exports.sendAdmissionQuery = async (req, res) => {
   try {
@@ -30,6 +29,8 @@ exports.getAdmissionQueriesByInstituteId = async (req, res) => {
     const { instituteId } = req.params;
 
     const queries = await AdmissionQuery.find({ instituteId }).sort({ createdAt: -1 });
+
+    
 
     res.status(200).json({
       success: true,
