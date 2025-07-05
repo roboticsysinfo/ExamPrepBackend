@@ -44,8 +44,7 @@ exports.createUser = async (req, res) => {
 
         if (
             (currentUserRole === 'super-admin' && role !== 'admin') ||
-            (currentUserRole === 'admin' && role !== 'teacher') ||
-            (currentUserRole === 'admin' && role !== 'admin') ||
+            (currentUserRole === 'admin' && role !== 'teacher' && role !== 'admin') ||
             (currentUserRole !== 'super-admin' && currentUserRole !== 'admin')
         ) {
             return res.status(403).json({
