@@ -25,11 +25,11 @@ exports.createTopic = async (req, res) => {
 exports.updateTopic = async (req, res) => {
   try {
     const { id } = req.params;
-    const { subject, name, instituteId } = req.body;
+    const { subject, name, instituteId, topicDetail } = req.body;
 
     const topic = await Topic.findByIdAndUpdate(
       id,
-      { subject, name, instituteId },
+      { subject, name, instituteId, topicDetail },
       { new: true }
     );
 
