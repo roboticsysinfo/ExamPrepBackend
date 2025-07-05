@@ -158,7 +158,7 @@ exports.getTopicsBySubjectId = async (req, res) => {
   try {
     const { subjectId } = req.params;
 
-    const topics = await Topic.find({ subject: subjectId });
+    const topics = await Topic.find({ subject: subjectId }).populate('subject', 'name');
 
     res.status(200).json({
       success: true,
