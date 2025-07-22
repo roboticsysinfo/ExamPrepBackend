@@ -264,11 +264,10 @@ exports.getAllQuestions = async (req, res) => {
 // };
 
 
-// 🔹 Get Questions by Filter (supports multiple topics)
-// 🔹 Get Questions by Filter (supports multiple topics)
+// 🔹 Get Questions by Filter (supports multiple topics + pagination)
 exports.getQuestionsByFilter = async (req, res) => {
   try {
-    const { exam, subject, topic } = req.query;
+    const { exam, subject, topic, page = 1, limit = 50 } = req.query;
 
     const filter = {};
 
@@ -281,17 +280,32 @@ exports.getQuestionsByFilter = async (req, res) => {
       filter.topic = { $in: topicArray };
     }
 
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const totalCount = await Question.countDocuments(filter);
+
     const questions = await Question.find(filter)
       .populate('exam', 'name')
       .populate('subject', 'name')
       .populate('topic', 'name')
       .sort({ createdAt: -1 })
-      .limit(50); // ✅ Limit results to 50
+      .skip(skip)
+      .limit(limitNumber);
+
+    const totalPages = Math.ceil(totalCount / limitNumber);
 
     res.status(200).json({
       success: true,
       message: 'Filtered questions fetched successfully',
-      data: questions
+      data: questions,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages,
+        totalCount
+      }
     });
   } catch (error) {
     console.error('Error fetching questions by filter:', error);
