@@ -265,6 +265,7 @@ exports.getAllQuestions = async (req, res) => {
 
 
 // 🔹 Get Questions by Filter (supports multiple topics)
+// 🔹 Get Questions by Filter (supports multiple topics)
 exports.getQuestionsByFilter = async (req, res) => {
   try {
     const { exam, subject, topic } = req.query;
@@ -284,7 +285,8 @@ exports.getQuestionsByFilter = async (req, res) => {
       .populate('exam', 'name')
       .populate('subject', 'name')
       .populate('topic', 'name')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(50); // ✅ Limit results to 50
 
     res.status(200).json({
       success: true,
@@ -300,6 +302,7 @@ exports.getQuestionsByFilter = async (req, res) => {
     });
   }
 };
+
 
 // 🔹 Get Questions by Institute ID
 exports.getQuestionsByInstituteId = async (req, res) => {
