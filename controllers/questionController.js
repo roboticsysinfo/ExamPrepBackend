@@ -301,8 +301,6 @@ exports.getQuestionsByFilter = async (req, res) => {
   }
 };
 
-
-
 // 🔹 Get Questions by Institute ID
 exports.getQuestionsByInstituteId = async (req, res) => {
   try {

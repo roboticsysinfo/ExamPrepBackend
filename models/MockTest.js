@@ -9,15 +9,16 @@ const mockTestSchema = new mongoose.Schema({
   title: { type: String, required: true },
   exam: { type: mongoose.Schema.Types.ObjectId, ref: 'Exam' },
   subject: { type: mongoose.Schema.Types.ObjectId, ref: 'Subject' },
-  topic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic' },
+
+  // 🔽 Updated to support multiple topics
+  topic: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }],
 
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
-  duration: { type: Number, default: 30 }, // in minutes
+  duration: { type: Number, default: 30 },
   totalMarks: { type: Number },
 
-  // 🔽 new fields
   isPaid: { type: Boolean, default: false },
-  price: { type: Number, default: 0 } // applicable only if isPaid is true
+  price: { type: Number, default: 0 }
 });
 
 module.exports = mongoose.model('MockTest', mockTestSchema);
