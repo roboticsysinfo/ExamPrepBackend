@@ -230,23 +230,61 @@ exports.getAllQuestions = async (req, res) => {
 
 
 // 🔹 Get Questions by Filter (only selected topic)
+// exports.getQuestionsByFilter = async (req, res) => {
+//   try {
+//     // Destructure only the needed params (difficulty removed)
+//     const { exam, subject, topic } = req.query;
+
+//     const filter = {};
+
+//     if (exam) filter.exam = exam;
+//     if (subject) filter.subject = subject;
+
+//     // Include only selected topic
+//     if (topic) filter.topic = topic; // Assuming topic is string id, no need to convert explicitly if stored as string
+
+//     const questions = await Question.find(filter)
+//       .populate('exam')
+//       .populate('subject')
+//       .populate('topic');
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Filtered questions fetched successfully',
+//       data: questions
+//     });
+//   } catch (error) {
+//     console.error('Error fetching questions by filter:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Failed to fetch questions',
+//       error: error.message
+//     });
+//   }
+// };
+
+
+// 🔹 Get Questions by Filter (supports multiple topics)
 exports.getQuestionsByFilter = async (req, res) => {
   try {
-    // Destructure only the needed params (difficulty removed)
     const { exam, subject, topic } = req.query;
 
     const filter = {};
 
-    if (exam) filter.exam = exam;
-    if (subject) filter.subject = subject;
+    if (exam?.trim()) filter.exam = exam;
+    if (subject?.trim()) filter.subject = subject;
 
-    // Include only selected topic
-    if (topic) filter.topic = topic; // Assuming topic is string id, no need to convert explicitly if stored as string
+    // Allow multiple topics (comma-separated)
+    if (topic?.trim()) {
+      const topicArray = topic.split(',').map(t => t.trim());
+      filter.topic = { $in: topicArray };
+    }
 
     const questions = await Question.find(filter)
-      .populate('exam')
-      .populate('subject')
-      .populate('topic');
+      .populate('exam', 'name')
+      .populate('subject', 'name')
+      .populate('topic', 'name')
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
