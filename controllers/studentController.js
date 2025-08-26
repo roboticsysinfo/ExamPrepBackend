@@ -54,7 +54,6 @@ exports.registerStudent = async (req, res) => {
     }
 
     // If image is uploaded
-    let profileImage = 'https://dummyimage.com/150x150/cccccc/000000&text=Profile';
     if (req.file) {
       profileImage = req.file.path;
     }
@@ -93,6 +92,7 @@ exports.registerStudent = async (req, res) => {
   }
 };
 
+
 // =================== SEND OTP (Dummy) ===================
 exports.sendOtp = async (req, res) => {
   try {
@@ -114,7 +114,7 @@ exports.sendOtp = async (req, res) => {
       });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000); // 4-digit OTP
 
     return res.status(200).json({
       success: true,
@@ -135,7 +135,7 @@ exports.verifyOtp = async (req, res) => {
   try {
     const { phoneNumber, otp } = req.body;
 
-    if (otp !== '123456') {
+    if (otp !== '1234') {
       return res.status(400).json({
         success: false,
         message: 'Invalid OTP',

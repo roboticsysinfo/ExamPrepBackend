@@ -11,7 +11,8 @@ const {
   filterMockTests,
   submitMockTestAnswers,
   getMockTestResultById,
-  getMockTestHistoryByStudentId
+  getMockTestHistoryByStudentId,
+  getMockTestsByExamId
 } = require('../controllers/mockTestController');
 const { authenticateUser } = require('../middlewares/authMiddleWare');
 const { authorizeRoles } = require('../middlewares/roleMiddleware');
@@ -28,23 +29,21 @@ router.get('/single-test/:id',  getTestById);      // Get test by ID
 
 router.get('/tests', getAllTests);         // Get all tests
 
-
 router.get('/mock-tests/by-institute/:instituteId', getMockTestsByInstituteId);
-
 
 router.get('/mock-test/search', searchMockTests);
 
-
 router.get('/mock-tests/filter', filterMockTests);
 
-
 router.post('/mock-test/submit', submitMockTestAnswers);
-
 
 router.get('/mock-test/result/:resultId', getMockTestResultById);
 
 // get student's mock test history
 router.get('/mock-test-history/:studentId', getMockTestHistoryByStudentId);
+
+// GET /api/mock-tests/exam/:examId
+router.get('/exam/mock-tests/:examId', getMockTestsByExamId);
 
 
 module.exports = router;

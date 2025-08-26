@@ -40,4 +40,7 @@ router.get('/practice-test/result/:resultId', practiceTestController.getPractice
 router.get('/practice-test-history/:studentId', practiceTestController.getPracticeTestHistoryByStudentId);
 
 
+// GET /api/practice-tests/exam/:examId?page=1&limit=10&search=biology
+router.get("/exam/practice-tests/:examId", practiceTestController.getPracticeTestsByExamId);
+
 module.exports = router;

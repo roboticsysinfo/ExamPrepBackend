@@ -1,6 +1,6 @@
 // controllers/subjectController.js
-
 const Subject = require('../models/Subject');
+
 
 // ✅ Create Subject
 exports.createSubject = async (req, res) => {
@@ -18,6 +18,7 @@ exports.createSubject = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
 
 // ✅ Update Subject
 exports.updateSubject = async (req, res) => {

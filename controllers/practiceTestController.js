@@ -355,4 +355,58 @@ exports.getPracticeTestHistoryByStudentId = async (req, res) => {
   }
 };
 
+// get practice test by exam
+exports.getPracticeTestsByExamId = async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { page = 1, limit = 10, search = "" } = req.query;
 
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Build query
+    let query = { exam: examId };
+    if (search && search.trim() !== "") {
+      query.title = { $regex: search, $options: "i" }; // case-insensitive search
+    }
+
+    // Fetch data with pagination
+    const practiceTests = await PracticeTest.find(query)
+      .populate("exam", "name")
+      .populate("subject", "name")
+      .populate("topic", "name")
+      .populate("questions")
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 });
+
+    const total = await PracticeTest.countDocuments(query);
+
+    if (!practiceTests || practiceTests.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No practice tests found for this exam",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Practice tests fetched successfully",
+      data: practiceTests,
+      pagination: {
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
+        hasMore: pageNumber * limitNumber < total,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching practice tests by examId:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};

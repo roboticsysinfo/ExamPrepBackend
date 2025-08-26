@@ -429,6 +429,65 @@ exports.getMockTestHistoryByStudentId = async (req, res) => {
   }
 };
 
+// get mock test by exam id
+
+exports.getMockTestsByExamId = async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { page = 1, limit = 10, search = "" } = req.query;
+
+    // Pagination calculations
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Build query
+    let query = { exam: examId };
+    if (search && search.trim() !== "") {
+      query.title = { $regex: search, $options: "i" }; // case-insensitive
+    }
+
+    // Fetch data with pagination
+    const mockTests = await MockTest.find(query)
+      .populate("exam", "name")
+      .populate("subject", "name")
+      .populate("topic", "name")
+      .populate("questions")
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 }); // latest first (optional)
+
+    // Get total count for pagination info
+    const total = await MockTest.countDocuments(query);
+
+    if (!mockTests || mockTests.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No mock tests found for this exam",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Mock tests fetched successfully",
+      data: mockTests,
+      pagination: {
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
+        hasMore: pageNumber * limitNumber < total,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching mock tests by examId:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
 
 
 
