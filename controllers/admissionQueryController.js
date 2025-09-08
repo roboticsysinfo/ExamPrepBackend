@@ -2,24 +2,54 @@ const AdmissionQuery = require('../models/AdmissionQuery');
 
 
 // @route POST /api/admission-queries
+// exports.sendAdmissionQuery = async (req, res) => {
+//   try {
+//     const newQuery = new AdmissionQuery(req.body);
+
+//     const savedQuery = await newQuery.save();
+//     res.status(201).json({
+//       success: true,
+//       message: 'Admission query submitted successfully',
+//       data: savedQuery
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       success: false,
+//       message: 'Failed to submit query',
+//       error: error.message
+//     });
+//   }
+// };
+
+
+// @route POST /api/admission-queries
 exports.sendAdmissionQuery = async (req, res) => {
   try {
-    const newQuery = new AdmissionQuery(req.body);
+    const queryData = { ...req.body };
+
+    // Handle file upload
+    if (req.file) {
+      queryData.profileImage = req.file.path; // or req.file.filename if you store only filename
+    }
+
+    const newQuery = new AdmissionQuery(queryData);
 
     const savedQuery = await newQuery.save();
     res.status(201).json({
       success: true,
       message: 'Admission query submitted successfully',
-      data: savedQuery
+      data: savedQuery,
     });
   } catch (error) {
+    console.error(error);
     res.status(400).json({
       success: false,
       message: 'Failed to submit query',
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 
 // @desc Get admission queries by institute ID
