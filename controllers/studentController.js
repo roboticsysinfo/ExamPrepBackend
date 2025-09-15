@@ -17,11 +17,10 @@ const generateRegNumber = async () => {
   return regNumber;
 };
 
+
 // =================== REGISTER STUDENT ===================
 exports.registerStudent = async (req, res) => {
-
   try {
-
     const {
       instituteId,
       name,
@@ -40,7 +39,7 @@ exports.registerStudent = async (req, res) => {
     if (!instituteId) {
       return res.status(400).json({
         success: false,
-        message: 'Institute ID is required',
+        message: "Institute ID is required",
       });
     }
 
@@ -49,11 +48,12 @@ exports.registerStudent = async (req, res) => {
     if (existing) {
       return res.status(400).json({
         success: false,
-        message: 'Phone number already registered',
+        message: "Phone number already registered",
       });
     }
 
-    // If image is uploaded
+    // ✅ Declare variable safely
+    let profileImage = null;
     if (req.file) {
       profileImage = req.file.path;
     }
@@ -74,19 +74,18 @@ exports.registerStudent = async (req, res) => {
       motherName,
       dob,
       gender,
-      profileImage
+      ...(profileImage && { profileImage }), // ✅ only add if exists
     });
 
     return res.status(201).json({
       success: true,
-      message: 'Student registered successfully',
+      message: "Student registered successfully",
       data: student,
     });
-
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: "Server error",
       error: err.message,
     });
   }
