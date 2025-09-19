@@ -129,6 +129,7 @@ exports.sendOtp = async (req, res) => {
   }
 };
 
+
 // =================== VERIFY OTP (Dummy 123456) ===================
 exports.verifyOtp = async (req, res) => {
   try {

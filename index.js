@@ -19,6 +19,7 @@ const previousQuestionPaperRoutes = require("./routes/previousQuestionPaperRoute
 const practiceTestRoutes = require("./routes/practiceTestRoutes");
 const doubtRoutes = require("./routes/doubtRoutes");
 const notificationRoutes = require("./routes/notificationRoutes")
+const adminMessageRoutes = require("./routes/adminMessageRoutes")
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/api", previousQuestionPaperRoutes);
 app.use("/api", practiceTestRoutes);
 app.use("/api", doubtRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api", adminMessageRoutes)
 
 
 // ========= Routes end=============

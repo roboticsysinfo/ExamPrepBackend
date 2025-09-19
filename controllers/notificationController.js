@@ -31,6 +31,7 @@ exports.sendNotification = async (req, res) => {
 // ✅ Send bulk notification to all students of an institute
 exports.sendNotificationToAll = async (req, res) => {
     try {
+        
         const { instituteId, type, title, message } = req.body;
 
         const students = await Student.find({ instituteId });
@@ -92,8 +93,6 @@ exports.getNotificationsByUser = async (req, res) => {
 };
 
 
-
-
 // ✅ Mark all notifications as read for a student in an institute
 exports.markAllAsRead = async (req, res) => {
     try {
@@ -109,6 +108,7 @@ exports.markAllAsRead = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error updating notifications', error: error.message });
     }
 };
+
 
 // ✅ Mark one notification as read
 exports.markOneAsRead = async (req, res) => {
