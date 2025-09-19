@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/smartexamgurustudent-firebase-adminsdk-fbsvc-27570dae07.json
 
 # testing
 /coverage

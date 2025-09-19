@@ -39,33 +39,23 @@ connectDB();
 
 // ========= Routes=============
 
+
 app.use("/api/auth", userRoutes);
-
 app.use("/api", studentRoutes);
-
 app.use("/api", subjectRoutes);
-
 app.use("/api", topicRoutes);
-
 app.use("/api", examRoutes);
-
 app.use("/api", mockTestRoutes);
-
 app.use("/api", questionRoutes);
-
 app.use("/api", examCategoryRoutes);
-
 app.use("/api", admissionQueryRoutes);
+app.use("/api", instituteRoutes);
+app.use("/api", previousQuestionPaperRoutes);
+app.use("/api", practiceTestRoutes);
+app.use("/api", doubtRoutes);
+app.use("/api", notificationRoutes);
 
-app.use("/api", instituteRoutes)
 
-app.use("/api", previousQuestionPaperRoutes)
-
-app.use("/api", practiceTestRoutes)
-
-app.use("/api", doubtRoutes)
-
-app.use("/api", notificationRoutes)
 // ========= Routes end=============
 
 

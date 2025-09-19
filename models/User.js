@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
     ref: 'Institute',
     default: null
   },
+  
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 

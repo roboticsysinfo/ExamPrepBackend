@@ -113,7 +113,7 @@ exports.sendOtp = async (req, res) => {
       });
     }
 
-    const otp = Math.floor(1000 + Math.random() * 9000); // 4-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
 
     return res.status(200).json({
       success: true,
@@ -134,7 +134,7 @@ exports.verifyOtp = async (req, res) => {
   try {
     const { phoneNumber, otp } = req.body;
 
-    if (otp !== '1234') {
+    if (otp !== '123456') {
       return res.status(400).json({
         success: false,
         message: 'Invalid OTP',
