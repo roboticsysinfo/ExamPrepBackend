@@ -1,6 +1,8 @@
+const OTPModel = require('../models/OTPModel');
 const Student = require('../models/StudentModel');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'mock_secret';
+const axios = require("axios")
 
 
 // Generate unique 10 digit number
@@ -129,7 +131,6 @@ exports.sendOtp = async (req, res) => {
   }
 };
 
-
 // =================== VERIFY OTP (Dummy 123456) ===================
 exports.verifyOtp = async (req, res) => {
   try {
@@ -172,6 +173,108 @@ exports.verifyOtp = async (req, res) => {
   }
 };
 
+
+// ========= Fast 2 sms ========
+
+// Reviewer phone numbers (fixed OTP)
+const reviewNumbers = ["1122334455", "9876543210"];
+
+// 📲 SEND OTP
+// exports.sendOtp = async (req, res) => {
+//   try {
+//     const { phoneNumber } = req.body;
+//     if (!phoneNumber) return res.status(400).json({ message: "Phone number is required" });
+
+//     const student = await Student.findOne({ phoneNumber });
+//     if (!student) return res.status(404).json({ message: "Phone number not registered" });
+
+//     let otp;
+//     if (reviewNumbers.includes(phoneNumber)) {
+//       otp = "123456"; // fixed OTP for reviewers
+//     } else {
+//       otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+//       // ✅ Send OTP via Fast2SMS
+//       await axios.post(
+//         "https://www.fast2sms.com/dev/bulkV2",
+//         {
+//           route: "dlt",
+//           sender_id: "QUOTEV",       // replace with your approved sender ID
+//           message: "198140",          // replace with your approved DLT template ID
+//           variables_values: otp,
+//           numbers: phoneNumber,
+//         },
+//         {
+//           headers: {
+//             authorization: process.env.FAST2SMS_API_KEY,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+//     }
+
+//     // Save OTP with 1-minute expiry
+//     const expiresAt = new Date(Date.now() + 60 * 1000);
+//     await OTPModel.create({ phone: phoneNumber, otp, expiresAt });
+
+//     res.status(200).json({
+//       success: true,
+//       message: reviewNumbers.includes(phoneNumber)
+//         ? "Review mode: OTP fixed to 123456"
+//         : "OTP sent successfully via SMS",
+//     });
+//   } catch (err) {
+//     console.error("Send OTP Error:", err.message);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+// ✅ VERIFY OTP
+// exports.verifyOtp = async (req, res) => {
+//   try {
+//     const { phoneNumber, otp } = req.body;
+//     if (!phoneNumber || !otp)
+//       return res.status(400).json({ message: "Phone number and OTP are required" });
+
+//     const latestOtp = await OTPModel.findOne({ phone: phoneNumber }).sort({ createdAt: -1 });
+//     if (!latestOtp || latestOtp.otp !== otp || new Date(latestOtp.expiresAt) < new Date()) {
+//       return res.status(401).json({ success: false, message: "Invalid or expired OTP" });
+//     }
+
+//     await OTPModel.deleteMany({ phone: phoneNumber }); // OTP consumed
+
+//     const student = await Student.findOne({ phoneNumber });
+//     if (!student) return res.status(404).json({ success: false, message: "Student not found" });
+
+//     const token = jwt.sign({ id: student._id, role: "student" }, JWT_SECRET, { expiresIn: "7d" });
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Login successful",
+//       token,
+//       data: {
+//         _id: student._id,
+//         name: student.name,
+//         email: student.email,
+//         phoneNumber: student.phoneNumber,
+//       },
+//     });
+//   } catch (err) {
+//     console.error("Verify OTP Error:", err.message);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+
+
+// ============ Fast 2 sms ===========
+
+
+
+
+
+
+
 // =================== UPDATE STUDENT ===================
 exports.updateStudent = async (req, res) => {
   try {
@@ -205,7 +308,6 @@ exports.updateStudent = async (req, res) => {
     });
   }
 };
-
 
 
 

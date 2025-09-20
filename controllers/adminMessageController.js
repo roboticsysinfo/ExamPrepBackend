@@ -2,6 +2,7 @@ const AdminMessage = require('../models/AdminMessage');
 const Student = require('../models/StudentModel');
 const { sendPushNotification } = require('../utils/fcm');
 
+
 exports.createMessage = async (req, res) => {
     try {
         const { title, body } = req.body;
@@ -24,8 +25,6 @@ exports.createMessage = async (req, res) => {
         res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
-
-
 
 
 exports.getAllMessages = async (req, res) => {
