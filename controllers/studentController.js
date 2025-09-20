@@ -399,3 +399,61 @@ exports.getStudentOverallRank = async (req, res) => {
     });
   }
 };
+
+
+
+
+// ✅ Update FCM Token
+exports.updateStudentFcmToken = async (req, res) => {
+  try {
+    const { studentId, fcmToken } = req.body;
+
+    if (!studentId || !fcmToken) {
+      return res.status(400).json({ message: "studentId & fcmToken required" });
+    }
+
+    const student = await Student.findByIdAndUpdate(
+      studentId,
+      { fcmToken },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.json({ message: "FCM Token updated successfully", student });
+  } catch (error) {
+    console.error("FCM update error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+// ✅ Remove FCM Token (logout / token expire)
+exports.removeFcmToken = async (req, res) => {
+  try {
+
+    const { studentId } = req.body;
+
+    if (!studentId) {
+      return res.status(400).json({ message: "studentId required" });
+    }
+
+    const student = await Student.findByIdAndUpdate(
+      studentId,
+      { $unset: { fcmToken: "" } },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.json({ message: "FCM Token removed successfully", student });
+  } catch (error) {
+    console.error("Remove FCM error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+  
+}

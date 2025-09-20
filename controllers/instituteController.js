@@ -3,6 +3,7 @@ const Institute = require('../models/Institute');
 
 // Function to generate next unique registration number
 const generateInstituteRegNumber = async () => {
+  
   const lastInstitute = await Institute.findOne().sort({ createdAt: -1 });
   let nextNumber = 1;
 

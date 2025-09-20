@@ -36,10 +36,16 @@ router.get('/getstudentbyid/:id', studentController.getStudentById);
 router.get('/get-students-by-institute/:instituteId',authenticateUser, authorizeRoles('super-admin', 'admin', 'teacher') , studentController.getStudentsByInstituteId);
 
 
-
 router.get('/get-leaderboard-data',  studentController.getLeaderboardData);
 
 
 router.get('/overall-score-rank/:studentId', studentController.getStudentOverallRank);
+
+
+router.get('/update-fcm-token',  studentController.updateStudentFcmToken);
+
+
+router.get('/remove-fcm-token',  studentController.removeFcmToken);
+
 
 module.exports = router;
